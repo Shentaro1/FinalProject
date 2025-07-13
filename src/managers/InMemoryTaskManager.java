@@ -20,11 +20,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     //a. Получение списка всех задач.
     public ArrayList<Task> getAllTask() {
-        ArrayList<Task> result_tasks = new ArrayList<>();
+        ArrayList<Task> resultTasks = new ArrayList<>();
         for (Task task : tasks.values()) {
-            result_tasks.add(new Task(task));
+            resultTasks.add(new Task(task));
         }
-        return result_tasks;
+        return resultTasks;
     }
 
     public ArrayList<SubTask> getAllSubTask() {
