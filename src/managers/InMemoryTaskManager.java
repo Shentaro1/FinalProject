@@ -28,19 +28,19 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public ArrayList<SubTask> getAllSubTask() {
-        ArrayList<SubTask> result_subTasks = new ArrayList<>();
+        ArrayList<SubTask> resultSubTasks = new ArrayList<>();
         for (SubTask subTask : subTasks.values()) {
-            result_subTasks.add(new SubTask(subTask));
+            resultSubTasks.add(new SubTask(subTask));
         }
-        return result_subTasks;
+        return resultSubTasks;
     }
 
     public ArrayList<EpicTask> getAllEpicTask() {
-        ArrayList<EpicTask> result_epicTasks = new ArrayList<>();
+        ArrayList<EpicTask> resultEpicTasks = new ArrayList<>();
         for (EpicTask epicTask : epicTasks.values()) {
-            result_epicTasks.add(new EpicTask(epicTask));
+            resultEpicTasks.add(new EpicTask(epicTask));
         }
-        return result_epicTasks;
+        return resultEpicTasks;
     }
 
     //b. Удаление всех задач.
