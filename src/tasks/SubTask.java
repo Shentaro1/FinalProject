@@ -9,9 +9,9 @@ public class SubTask extends AbstractTask {
         fkEpicTask = subTask.getFk_epicTask();
     }
 
-    public SubTask(String description, String name, EpicTask fk_epicTask) {
+    public SubTask(String description, String name, EpicTask fkEpicTask) {
         super(description, name);
-        this.fkEpicTask = fk_epicTask;
+        this.fkEpicTask = fkEpicTask;
     }
 
     //get
@@ -20,8 +20,8 @@ public class SubTask extends AbstractTask {
     }
 
     //set
-    public void setFk_epicTask(EpicTask fk_epicTask) {
-        this.fkEpicTask = fk_epicTask;
+    public void setFk_epicTask(EpicTask fkEpicTask) {
+        this.fkEpicTask = fkEpicTask;
     }
 
     public void setStatus(Status status) {
