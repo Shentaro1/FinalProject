@@ -3,7 +3,7 @@ import types.Status;
 
 import java.util.ArrayList;
 
-public class EpicTask extends AbstractTask{
+public class EpicTask extends AbstractTask {
     private final ArrayList<SubTask> subTasks;
 
     public EpicTask(EpicTask epicTask) {
