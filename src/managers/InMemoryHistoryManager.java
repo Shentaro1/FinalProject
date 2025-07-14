@@ -12,7 +12,28 @@ public class InMemoryHistoryManager<T> implements HistoryManager {
     private int size;
     private Map<Integer, Node<T>> history = new HashMap<>();
 
-    public static class Node<T> {
+    @Override
+    public void add(AbstractTask abstractTask) {
+        linkLast(abstractTask);
+    }
+
+    @Override
+    public void remove(int id) {
+        removeNode(id);
+    }
+
+    @Override
+    public ArrayList<AbstractTask> getHistory() {
+        ArrayList<AbstractTask> historyList = new ArrayList<>(history.size());
+        Node<T> current = head;
+        while (current != null) {
+            historyList.add(current.data.copy());
+            current = current.next;
+        }
+        return historyList;
+    }
+
+    private static class Node<T> {
         public AbstractTask data;
         Node<T> next;
         Node<T> prev;
@@ -24,7 +45,7 @@ public class InMemoryHistoryManager<T> implements HistoryManager {
         }
     }
 
-    public void linkLast(AbstractTask abstractTask) {
+    private void linkLast(AbstractTask abstractTask) {
         if (abstractTask == null) {
             return;
         }
@@ -45,10 +66,6 @@ public class InMemoryHistoryManager<T> implements HistoryManager {
         }
         size++;
         history.put(abstractTask.getId(), newNode);
-    }
-
-    public void add(AbstractTask abstractTask) {
-        linkLast(abstractTask);
     }
 
     private void removeNode(int id) {
@@ -77,19 +94,5 @@ public class InMemoryHistoryManager<T> implements HistoryManager {
 
         history.remove(id);
         size--;
-    }
-
-    public void remove(int id) {
-        removeNode(id);
-    }
-
-    public ArrayList<AbstractTask> getHistory() {
-        ArrayList<AbstractTask> historyList = new ArrayList<>(history.size());
-        Node<T> current = head;
-        while (current != null) {
-            historyList.add(current.data.copy());
-            current = current.next;
-        }
-        return historyList;
     }
 }
