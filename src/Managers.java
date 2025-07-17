@@ -9,5 +9,9 @@ public class Managers {
     public static TaskManager getDefault() {
         return new InMemoryTaskManager(getDefaultHistory());
     }
+
+    public static FileBackedTaskManager getDefaultFileBackedTaskManager() {
+        return new FileBackedTaskManager(getDefault(), );
+    }
 }
 
