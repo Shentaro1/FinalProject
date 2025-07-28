@@ -17,6 +17,15 @@ public class InMemoryTaskManager implements TaskManager {
         epicTasks = new HashMap<>();
         this.historyManager = historyManager;
     }
+    //Конструктор для создания FileBackedTaskManager
+    protected InMemoryTaskManager(InMemoryTaskManager taskManager) {
+        counterID = taskManager.counterID;
+        tasks = taskManager.tasks;
+        subTasks = taskManager.subTasks;
+        epicTasks = taskManager.epicTasks;
+        historyManager = taskManager.historyManager;
+    }
+
 
     //a. Получение списка всех задач.
     public ArrayList<Task> getAllTask() {

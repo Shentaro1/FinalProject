@@ -10,8 +10,5 @@ public class Managers {
         return new InMemoryTaskManager(getDefaultHistory());
     }
 
-    public static FileBackedTaskManager getDefaultFileBackedTaskManager() {
-        return new FileBackedTaskManager(getDefault(), );
-    }
 }
 
