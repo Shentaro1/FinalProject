@@ -4,14 +4,21 @@ import types.Status;
 public class SubTask extends AbstractTask {
     EpicTask fkEpicTask;
 
+    //Конструктор копирования
     public SubTask(SubTask subTask) {
         super(subTask);
         fkEpicTask = subTask.getFk_epicTask();
     }
 
+    //Дефолтный конструктор
     public SubTask(String description, String name, EpicTask fkEpicTask) {
         super(description, name);
         this.fkEpicTask = fkEpicTask;
+    }
+
+    //Конструктор для создания при помощи файла
+    public SubTask(String name, String description, Status status, int id) {
+        super(id, description, name, status);
     }
 
     //get

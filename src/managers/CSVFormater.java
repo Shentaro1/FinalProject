@@ -17,7 +17,7 @@ public class CSVFormater {
 
     public static String toStringSubTask(SubTask task) {
         return String.format(
-                "%d,TASK,%s,%s,%s,\n",
+                "%d,SUBTASK,%s,%s,%s,\n",
                 task.getId(),
                 task.getName(),
                 task.getStatus().name().toUpperCase(),
@@ -27,7 +27,7 @@ public class CSVFormater {
 
     public static String toStringEpicTask(EpicTask task) {
         return String.format(
-                "%d,TASK,%s,%s,%s,\n",
+                "%d,EPICTASK,%s,%s,%s,\n",
                 task.getId(),
                 task.getName(),
                 task.getStatus().name().toUpperCase(),
