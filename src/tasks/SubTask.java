@@ -1,6 +1,4 @@
 package tasks;
-import managers.InMemoryTaskManager;
-import managers.TaskManager;
 import types.Status;
 
 public class SubTask extends AbstractTask {
