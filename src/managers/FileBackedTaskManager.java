@@ -159,7 +159,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     //метод сохраняющий в файл
-    public void save() {
+    private void save() {
         try (FileWriter fileWriter = new FileWriter(file, false);
              BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
             bufferedWriter.write(CSVFormater.firstLine());
