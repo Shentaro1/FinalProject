@@ -18,6 +18,20 @@ public class InMemoryTaskManager implements TaskManager {
         this.historyManager = historyManager;
     }
 
+    //Конструктор для создания FileBackedTaskManager
+    protected InMemoryTaskManager(InMemoryTaskManager taskManager) {
+        counterID = taskManager.counterID;
+        tasks = taskManager.tasks;
+        subTasks = taskManager.subTasks;
+        epicTasks = taskManager.epicTasks;
+        historyManager = taskManager.historyManager;
+    }
+
+//    //Получение EpicTask по id
+//    public static EpicTask getEpicTaskBy(int id) {
+//        return this.getEpicTaskByID(id);
+//    }
+
     //a. Получение списка всех задач.
     public ArrayList<Task> getAllTask() {
         ArrayList<Task> resultTasks = new ArrayList<>();
@@ -204,5 +218,9 @@ public class InMemoryTaskManager implements TaskManager {
     //получение истории
     public ArrayList<AbstractTask> getHistory() {
         return historyManager.getHistory();
+    }
+
+    public void setCounterID(int id) {
+        this.counterID = id;
     }
 }
