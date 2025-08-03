@@ -27,6 +27,11 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager = taskManager.historyManager;
     }
 
+//    //Получение EpicTask по id
+//    public static EpicTask getEpicTaskBy(int id) {
+//        return this.getEpicTaskByID(id);
+//    }
+
     //a. Получение списка всех задач.
     public ArrayList<Task> getAllTask() {
         ArrayList<Task> resultTasks = new ArrayList<>();

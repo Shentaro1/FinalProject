@@ -29,7 +29,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 String[] myArrayFromLine = line.split(",");
                 int currentID = Integer.parseInt(myArrayFromLine[0]);
                 maxId = Math.max(currentID, maxId);
-                taskManager.setCounterID(maxId);
+                taskManager.setCounterID(currentID);
                 switch (myArrayFromLine[1]) {
                     case "TASK":
                         taskManager.createTask(
@@ -58,7 +58,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                                      myArrayFromLine[2],
                                      myArrayFromLine[4],
                                      Status.valueOf(myArrayFromLine[3]),
-                                     currentID
+                                     currentID,
+                                     taskManager.getEpicTaskByID(Integer.parseInt(myArrayFromLine[5]))
                              )
                         );
                         break;
@@ -70,6 +71,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerSaveException(e.getMessage());
         }
 
+        taskManager.setCounterID(maxId + 1);
         return new FileBackedTaskManager(taskManager, file);
     }
 
@@ -165,18 +167,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 bufferedWriter.write(CSVFormater.toStringTask(task));
             }
 
-            for (SubTask task : getAllSubTask()) {
-                bufferedWriter.write(CSVFormater.toStringSubTask(task));
-            }
-
             for (EpicTask epicTask : getAllEpicTask()) {
                 bufferedWriter.write(CSVFormater.toStringEpicTask(epicTask));
+            }
+
+            for (SubTask task : getAllSubTask()) {
+                bufferedWriter.write(CSVFormater.toStringSubTask(task));
             }
 
         } catch (IOException e) {
             throw new ManagerSaveException(e.getMessage());
         }
-
     }
-
 }

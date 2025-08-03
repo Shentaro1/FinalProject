@@ -17,12 +17,12 @@ public class CSVFormater {
 
     public static String toStringSubTask(SubTask task) {
         return String.format(
-                "%d,SUBTASK,%s,%s,%s,\n",
+                "%d,SUBTASK,%s,%s,%s,%d\n",
                 task.getId(),
                 task.getName(),
                 task.getStatus().name().toUpperCase(),
                 task.getDescription(),
-                task.getFk_epicTask());
+                task.getFk_epicTask().getId());
     }
 
     public static String toStringEpicTask(EpicTask task) {
@@ -31,12 +31,11 @@ public class CSVFormater {
                 task.getId(),
                 task.getName(),
                 task.getStatus().name().toUpperCase(),
-                task.getDescription(),
-                task.getSubTasks());
+                task.getDescription());
     }
 
     public static String firstLine() {
-        return ("id,type,name,status,description,epic");
+        return ("id,type,name,status,description,epic\n");
     }
 
 

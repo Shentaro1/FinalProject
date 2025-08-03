@@ -1,4 +1,6 @@
 package tasks;
+import managers.InMemoryTaskManager;
+import managers.TaskManager;
 import types.Status;
 
 public class SubTask extends AbstractTask {
@@ -17,8 +19,9 @@ public class SubTask extends AbstractTask {
     }
 
     //Конструктор для создания при помощи файла
-    public SubTask(String name, String description, Status status, int id) {
+    public SubTask(String name, String description, Status status, int id, EpicTask epicTask) {
         super(id, description, name, status);
+        this.fkEpicTask = epicTask;
     }
 
     //get
