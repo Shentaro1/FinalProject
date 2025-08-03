@@ -13,7 +13,7 @@ public class Task extends AbstractTask {
         super(task);
     }
 
-    //Конструктор для создания при помощи файла
+    //Конструктор создания при помощи файла
     public Task(String name, String description, Status status, int id) {
         super(id, description, name, status);
     }
