@@ -6,24 +6,15 @@ import java.util.ArrayList;
 public class EpicTask extends AbstractTask {
     private final ArrayList<SubTask> subTasks;
 
-    //Конструктор копирования
     public EpicTask(EpicTask epicTask) {
         super(epicTask);
         subTasks = new ArrayList<>(epicTask.getSubTasks());
     }
 
-    //Дефолтный конструктор
     public EpicTask(String description, String name) {
         super(description, name);
         subTasks = new ArrayList<>();
     }
-
-    //Конструктор для создания при помощи файла
-    public EpicTask(String name, String description, Status status, int id) {
-        super(id, description, name, status);
-        this.subTasks = new ArrayList<SubTask>();
-    }
-
 
     public void updateStatus() {
         if (subTasks.isEmpty()) {
