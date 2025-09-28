@@ -7,6 +7,8 @@ import exception.*;
 import types.Status;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
@@ -37,7 +39,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                                         myArrayFromLine[2],
                                         myArrayFromLine[4],
                                         Status.valueOf(myArrayFromLine[3]),
-                                        currentID
+                                        currentID,
+                                        Duration.parse(myArrayFromLine[6]),
+                                        LocalDateTime.parse(myArrayFromLine[5])
                                 )
                         );
                         break;
@@ -47,8 +51,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                                         myArrayFromLine[2],
                                         myArrayFromLine[4],
                                         Status.valueOf(myArrayFromLine[3]),
-                                        currentID
-
+                                        currentID,
+                                        Duration.parse(myArrayFromLine[5]),
+                                        LocalDateTime.parse(myArrayFromLine[6])
                                 )
                         );
                         break;
@@ -59,7 +64,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                                      myArrayFromLine[4],
                                      Status.valueOf(myArrayFromLine[3]),
                                      currentID,
-                                     taskManager.getEpicTaskByID(Integer.parseInt(myArrayFromLine[5]))
+                                     taskManager.getEpicTaskByID(Integer.parseInt(myArrayFromLine[7])),
+                                     Duration.parse(myArrayFromLine[6]),
+                                     LocalDateTime.parse(myArrayFromLine[5])
                              )
                         );
                         break;
