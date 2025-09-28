@@ -1,9 +1,12 @@
 package tasks;
 import types.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Task extends AbstractTask {
 
-    //Дефолтный конструктор
+    //Дефолтный конструктор со временем
     public Task(String description, String name) {
         super(description, name);
     }
@@ -13,10 +16,16 @@ public class Task extends AbstractTask {
         super(task);
     }
 
-    //Конструктор создания при помощи файла
-    public Task(String name, String description, Status status, int id) {
-        super(id, description, name, status);
+    //Конструктор создания при помощи файла с временем
+    public Task(String name, String description, Status status, int id, Duration duration, LocalDateTime startTime) {
+        super(id, duration, startTime, name, description, status);
     }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return getStartTime().plus(getDuration());
+    }
+
 
     //set
     public void setStatus(Status status) {
@@ -37,4 +46,5 @@ public class Task extends AbstractTask {
     public Task copy() {
         return new Task(this);
     }
+
 }
