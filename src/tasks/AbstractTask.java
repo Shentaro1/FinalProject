@@ -5,7 +5,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public abstract class AbstractTask {
+public abstract class AbstractTask implements Comparable<AbstractTask> {
     private int id;
     private Duration duration;
     private LocalDateTime startTime;
@@ -101,4 +101,17 @@ public abstract class AbstractTask {
     }
 
     public abstract AbstractTask copy();
+
+    @Override
+    public int compareTo(AbstractTask o) {
+        if (this.getStartTime().isBefore(o.getStartTime())) {
+            return 1;
+        } if (this.getStartTime().isAfter(o.getStartTime())) {
+            return -1;
+        } else {
+            return 0;
+        }
+
+    }
+
 }

@@ -1,8 +1,12 @@
 package managers;
 
 import tasks.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class InMemoryTaskManager implements TaskManager {
     private int counterID;
@@ -10,11 +14,13 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, SubTask> subTasks;
     private final HashMap<Integer, EpicTask> epicTasks;
     private final HistoryManager historyManager;
+    private final TreeMap<LocalDateTime, AbstractTask> allTasks;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         tasks = new HashMap<>();
         subTasks = new HashMap<>();
         epicTasks = new HashMap<>();
+        allTasks = new TreeMap<>();
         this.historyManager = historyManager;
     }
 
@@ -24,13 +30,15 @@ public class InMemoryTaskManager implements TaskManager {
         tasks = taskManager.tasks;
         subTasks = taskManager.subTasks;
         epicTasks = taskManager.epicTasks;
+        allTasks = taskManager.allTasks;
         historyManager = taskManager.historyManager;
     }
 
-//    //Получение EpicTask по id
-//    public static EpicTask getEpicTaskBy(int id) {
-//        return this.getEpicTaskByID(id);
-//    }
+    public void getPrioritizedTasks() {
+        for (Map.Entry<LocalDateTime, AbstractTask> entry : allTasks.entrySet()) {
+            System.out.println(entry);
+        }
+    }
 
     //a. Получение списка всех задач.
     public ArrayList<Task> getAllTask() {
@@ -97,6 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicTask == null)
             return null;
         historyManager.add(epicTask);
+        allTasks.put(epicTask.getStartTime(), epicTask);
         return new EpicTask(epicTask);
     }
 
@@ -107,6 +116,7 @@ public class InMemoryTaskManager implements TaskManager {
         task = new Task(task);
         task.setId(counterID++);
         tasks.put(task.getId(), task);
+        allTasks.put(task.getStartTime(), task);
         return task.getId();
     }
 
@@ -120,6 +130,7 @@ public class InMemoryTaskManager implements TaskManager {
         epicTask.getSubTasks().add(subTask);
         epicTask.updateStatus();
         subTasks.put(subTask.getId(), subTask);
+        allTasks.put(subTask.getStartTime(), subTask);
         return subTask.getId();
     }
 
@@ -129,6 +140,7 @@ public class InMemoryTaskManager implements TaskManager {
         epicTask = new EpicTask(epicTask);
         epicTask.setId(counterID++);
         epicTasks.put(epicTask.getId(), epicTask);
+        allTasks.put(epicTask.getStartTime(), epicTask);
         return epicTask.getId();
     }
 
