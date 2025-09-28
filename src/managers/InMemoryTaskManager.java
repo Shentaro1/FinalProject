@@ -153,6 +153,8 @@ public class InMemoryTaskManager implements TaskManager {
         currentTask.setName(task.getName());
         currentTask.setDescription(task.getDescription());
         currentTask.setStatus(task.getStatus());
+        currentTask.setDuration(task.getDuration());
+        currentTask.setStartTime(task.getStartTime());
         return true;
     }
 
@@ -174,6 +176,8 @@ public class InMemoryTaskManager implements TaskManager {
         currentSubTask.setName(subTask.getName());
         currentSubTask.setDescription(subTask.getDescription());
         currentSubTask.setStatus(subTask.getStatus());
+        currentSubTask.setDuration(subTask.getDuration());
+        currentSubTask.setStartTime(subTask.getStartTime());
         currentSubTask.getFk_epicTask().updateStatus();
         return true;
     }
@@ -185,6 +189,8 @@ public class InMemoryTaskManager implements TaskManager {
         EpicTask currentEpicTask = epicTasks.get(epicTask.getId());
         currentEpicTask.setName(epicTask.getName());
         currentEpicTask.setDescription(epicTask.getDescription());
+        currentEpicTask.setDuration(epicTask.getDuration());
+        currentEpicTask.setStartTime(epicTask.getStartTime());
         return true;
     }
 
