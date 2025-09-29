@@ -105,7 +105,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicTask == null)
             return null;
         historyManager.add(epicTask);
-        allTasks.put(epicTask.getStartTime(), epicTask);
         return new EpicTask(epicTask);
     }
 
@@ -116,7 +115,9 @@ public class InMemoryTaskManager implements TaskManager {
         task = new Task(task);
         task.setId(counterID++);
         tasks.put(task.getId(), task);
-        allTasks.put(task.getStartTime(), task);
+        if (isTaskOverlap(task)) {
+            allTasks.put(task.getStartTime(), task);
+        }
         return task.getId();
     }
 
@@ -130,7 +131,9 @@ public class InMemoryTaskManager implements TaskManager {
         epicTask.getSubTasks().add(subTask);
         epicTask.updateStatus();
         subTasks.put(subTask.getId(), subTask);
-        allTasks.put(subTask.getStartTime(), subTask);
+        if (isTaskOverlap(subTask)) {
+            allTasks.put(subTask.getStartTime(), subTask);
+        }
         return subTask.getId();
     }
 
@@ -140,6 +143,9 @@ public class InMemoryTaskManager implements TaskManager {
         epicTask = new EpicTask(epicTask);
         epicTask.setId(counterID++);
         epicTasks.put(epicTask.getId(), epicTask);
+        if (isTaskOverlap(epicTask)) {
+            allTasks.put(epicTask.getStartTime(), epicTask);
+        }
         allTasks.put(epicTask.getStartTime(), epicTask);
         return epicTask.getId();
     }
@@ -240,5 +246,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void setCounterID(int id) {
         this.counterID = id;
+    }
+
+    //метод для проверки на пересечение задач
+    public boolean isTaskOverlap(AbstractTask task) {
+        Task varTask = (Task) allTasks.lastEntry().getValue();
+        LocalDateTime finalTime = task.getStartTime().plus(task.getDuration());
+        if (task.getStartTime().isBefore(finalTime)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
