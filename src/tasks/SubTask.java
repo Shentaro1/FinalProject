@@ -3,6 +3,7 @@ import types.Status;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class SubTask extends AbstractTask {
     EpicTask fkEpicTask;
@@ -27,6 +28,9 @@ public class SubTask extends AbstractTask {
 
     @Override
     public LocalDateTime getEndTime() {
+        if (getStartTime() == null || getDuration() == null) {
+            return null;
+        }
         return getStartTime().plus(getDuration());
     }
 
@@ -52,6 +56,8 @@ public class SubTask extends AbstractTask {
                 ", id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", status=" + getStatus() +
+                ", duration=" + getDuration() +
+                ", startTime=" + getStartTime() +
                 "} ";
     }
 

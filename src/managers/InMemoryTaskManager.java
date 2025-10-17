@@ -36,7 +36,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void getPrioritizedTasks() {
         for (Map.Entry<LocalDateTime, AbstractTask> entry : allTasks.entrySet()) {
-            System.out.println(entry);
+            System.out.println(entry.getValue());
         }
     }
 
@@ -115,7 +115,7 @@ public class InMemoryTaskManager implements TaskManager {
         task = new Task(task);
         task.setId(counterID++);
         tasks.put(task.getId(), task);
-        if (isTaskOverlap(task)) {
+        if (!isTaskOverlap(task)) {
             allTasks.put(task.getStartTime(), task);
         }
         return task.getId();
@@ -131,25 +131,24 @@ public class InMemoryTaskManager implements TaskManager {
         epicTask.getSubTasks().add(subTask);
         epicTask.updateStatus();
         subTasks.put(subTask.getId(), subTask);
-        if (isTaskOverlap(subTask)) {
+        if (!isTaskOverlap(subTask)) {
             allTasks.put(subTask.getStartTime(), subTask);
         }
         return subTask.getId();
     }
 
     public int createEpicTask(EpicTask epicTask) {
-        if (epicTask == null)
+        if (epicTask == null) {
             return -1;
-        epicTask = new EpicTask(epicTask);
-        epicTask.setId(counterID++);
-        epicTasks.put(epicTask.getId(), epicTask);
-        if (isTaskOverlap(epicTask)) {
-            allTasks.put(epicTask.getStartTime(), epicTask);
         }
-        allTasks.put(epicTask.getStartTime(), epicTask);
-        return epicTask.getId();
+        EpicTask newEpic = new EpicTask(epicTask);
+        newEpic.setId(counterID++);
+        epicTasks.put(newEpic.getId(), newEpic);
+//        if (!isTaskOverlap(epicTask)) {
+//            allTasks.put(epicTask.getStartTime(), epicTask);
+//        }
+        return newEpic.getId();
     }
-
 
     //e. Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
     public boolean updateTask(Task task) {
@@ -250,12 +249,22 @@ public class InMemoryTaskManager implements TaskManager {
 
     //метод для проверки на пересечение задач
     public boolean isTaskOverlap(AbstractTask task) {
-        Task varTask = (Task) allTasks.lastEntry().getValue();
-        LocalDateTime finalTime = task.getStartTime().plus(task.getDuration());
-        if (task.getStartTime().isBefore(finalTime)) {
+        LocalDateTime newStart = task.getStartTime();
+        LocalDateTime newEnd = task.getEndTime();
+        if (allTasks.isEmpty()) {
             return false;
-        } else {
-            return true;
         }
+        for (Map.Entry<LocalDateTime, AbstractTask> entry : allTasks.entrySet()) {
+            if (entry.getValue() == null) {
+                break;
+            } else {
+                LocalDateTime oldStart = entry.getKey();
+                LocalDateTime oldEnd = entry.getValue().getEndTime();
+                if (!(oldEnd.isBefore(newStart) || newEnd.isBefore(oldStart))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -20,7 +20,7 @@ public class EpicTask extends AbstractTask {
     public EpicTask(String description, String name) {
         super(description, name);
         subTasks = new ArrayList<>();
-        endTime = LocalDateTime.MIN;
+        endTime = null;
     }
 
     //Конструктор для создания при помощи файла
@@ -31,10 +31,17 @@ public class EpicTask extends AbstractTask {
 
     @Override
     public LocalDateTime getStartTime() {
-        LocalDateTime flag = subTasks.getFirst().getStartTime();
+        if (subTasks == null || subTasks.isEmpty()) {
+            return null;
+        }
+
+        LocalDateTime flag = null;
         for (SubTask subTask : subTasks) {
-            if (subTask.getStartTime().isBefore(flag)) {
-                flag = subTask.getStartTime();
+            LocalDateTime startTime = subTask.getStartTime();
+            if (startTime != null) {
+                if (flag == null || startTime.isBefore(flag)) {
+                    flag = startTime;
+                }
             }
         }
         return flag;
@@ -42,15 +49,32 @@ public class EpicTask extends AbstractTask {
 
     @Override
     public Duration getDuration() {
-        return Duration.between(getStartTime(), getEndTime());
+        LocalDateTime start = getStartTime();
+        LocalDateTime end = getEndTime();
+
+        if (start == null || end == null) {
+            return null;
+        }
+
+        return Duration.between(start, end);
     }
 
     @Override
     public LocalDateTime getEndTime() {
-        LocalDateTime flag = LocalDateTime.MIN;
+        if (subTasks == null || subTasks.isEmpty()) {
+            return null;
+        }
+
+        LocalDateTime flag = null;
         for (SubTask subTask : subTasks) {
-            if (subTask.getStartTime().plus(subTask.getDuration()).isAfter(flag)) {
-                flag = subTask.getStartTime().plus(subTask.getDuration());
+            LocalDateTime startTime = subTask.getStartTime();
+            Duration duration = subTask.getDuration();
+
+            if (startTime != null && duration != null) {
+                LocalDateTime endTime = startTime.plus(duration);
+                if (flag == null || endTime.isAfter(flag)) {
+                    flag = endTime;
+                }
             }
         }
         return flag;
@@ -104,6 +128,8 @@ public class EpicTask extends AbstractTask {
                 ", id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", status=" + getStatus() +
+                ", duration='" + getDuration() + "'" + 
+                ", startTime=" + getStartTime() +
                 "} ";
     }
 

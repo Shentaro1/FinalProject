@@ -14,8 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 
-public class FileBackedTaskManagerTest {
-    private FileBackedTaskManager fb;
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     private File file;
 
     ArrayList<String> readerFile() {
@@ -34,12 +33,7 @@ public class FileBackedTaskManagerTest {
         return result;
     }
 
-    @BeforeEach
-    void createTaskManager() throws IOException {
-        file = File.createTempFile("test", "csv");
-        fb = new FileBackedTaskManager(new InMemoryTaskManager(new InMemoryHistoryManager<>()), file);
-    }
-
+    @Override
     @Test
     void testCreateTask() {
         fb.createTask(new Task("a", "b"));
@@ -49,6 +43,7 @@ public class FileBackedTaskManagerTest {
         assertEquals("0,TASK,b,NEW,a,", bf.getLast(), "");
     }
 
+    @Override
     @Test
     void testCreateEpicTask() {
         fb.createEpicTask(new EpicTask("a", "b"));
@@ -58,6 +53,7 @@ public class FileBackedTaskManagerTest {
         assertEquals("0,EPICTASK,b,NEW,a,", bf.getLast(), "");
     }
 
+    @Override
     @Test
     void testCreateSubTask() {
         int epicId = fb.createEpicTask(new EpicTask("a", "b"));
@@ -78,6 +74,7 @@ public class FileBackedTaskManagerTest {
         );
     }
 
+    @Override
     @Test
     void testClearTask() {
         fb.createTask(new Task("a", "b"));

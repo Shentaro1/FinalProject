@@ -8,13 +8,8 @@ import utils.Managers;
 import java.util.ArrayList;
 
 
-class InMemoryTaskManagerTest {
+class InMemoryTaskManagerTest extends TaskManagerTest {
     private InMemoryTaskManager tm;
-
-    @BeforeEach
-    void createInMemoryTaskManager() {
-        tm = (InMemoryTaskManager) Managers.getDefault();
-    }
 
     @Test
     void testCreateTask() {

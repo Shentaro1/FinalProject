@@ -24,8 +24,8 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
-        this.duration = Duration.ZERO;
-        this.startTime = LocalDateTime.MIN;
+        this.duration = null;
+        this.startTime = null;
     }
 
     //конструктор для сохранения из файла со временем

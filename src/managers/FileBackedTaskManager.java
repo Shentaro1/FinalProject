@@ -10,7 +10,7 @@ import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class FileBackedTaskManager extends InMemoryTaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     private final File file;
 
     //Конструктор для создания FileBackedTaskManager
