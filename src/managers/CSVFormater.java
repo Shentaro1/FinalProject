@@ -19,14 +19,15 @@ public class CSVFormater {
 
     public static String toStringSubTask(SubTask task) {
         return String.format(
-                "%d,SUBTASK,%s,%s,%s,%s,%s,%d\n",
+                "%d,SUBTASK,%s,%s,%s,%d,%s,%s\n",
                 task.getId(),
                 task.getName(),
                 task.getStatus().name().toUpperCase(),
                 task.getDescription(),
-                task.getStartTime().toString(),
-                task.getDuration().toString(),
-                task.getFk_epicTask().getId());
+                task.getFk_epicTask().getId(),
+                task.getStartTime() != null ? task.getStartTime().toString() : "",
+                task.getDuration() != null ? task.getDuration().toString() : ""
+                );
     }
 
     public static String toStringEpicTask(EpicTask task) {
@@ -36,8 +37,9 @@ public class CSVFormater {
                 task.getName(),
                 task.getStatus().name().toUpperCase(),
                 task.getDescription(),
-                task.getStartTime().toString(),
-                task.getDuration().toString());
+                task.getStartTime() != null ? task.getStartTime().toString() : "",
+                task.getDuration() != null ? task.getDuration().toString() : ""
+                );
     }
 
     public static String firstLine() {

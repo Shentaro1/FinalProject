@@ -144,9 +144,6 @@ public class InMemoryTaskManager implements TaskManager {
         EpicTask newEpic = new EpicTask(epicTask);
         newEpic.setId(counterID++);
         epicTasks.put(newEpic.getId(), newEpic);
-//        if (!isTaskOverlap(epicTask)) {
-//            allTasks.put(epicTask.getStartTime(), epicTask);
-//        }
         return newEpic.getId();
     }
 
@@ -254,17 +251,17 @@ public class InMemoryTaskManager implements TaskManager {
         if (allTasks.isEmpty()) {
             return false;
         }
+
+        if (newStart == null || newEnd == null) {
+            return true;
+        }
         for (Map.Entry<LocalDateTime, AbstractTask> entry : allTasks.entrySet()) {
-            if (entry.getValue() == null) {
-                break;
-            } else {
-                LocalDateTime oldStart = entry.getKey();
-                LocalDateTime oldEnd = entry.getValue().getEndTime();
-                if (!(oldEnd.isBefore(newStart) || newEnd.isBefore(oldStart))) {
-                    return true;
-                }
+            LocalDateTime oldStart = entry.getKey();
+            LocalDateTime oldEnd = entry.getValue().getEndTime();
+            if (!(oldEnd.isBefore(oldStart) || oldStart.isAfter(newEnd))) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }
