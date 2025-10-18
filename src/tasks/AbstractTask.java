@@ -109,8 +109,7 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         }
         if (this.getStartTime().isAfter(o.getStartTime())) {
             return -1;
-        }
-        else {
+        } else {
             return 0;
         }
 
