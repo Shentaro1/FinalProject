@@ -5,19 +5,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.*;
 import types.Status;
+import utils.Managers;
+
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 
 public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     private File file;
 
-    ArrayList<String> readerFile() {
+    private ArrayList<String> readerFile() {
         ArrayList<String> result = new ArrayList<>();
 
         try (
@@ -33,101 +37,104 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         return result;
     }
 
+    @BeforeEach
+    void createTaskManager() throws IOException {
+        file = File.createTempFile("test", "csv");
+        tm = (FileBackedTaskManager) Managers.getDefaultFileBack(file);
+    }
+
     @Test
     void testCreateTask() {
-        fb.createTask(new Task("a", "b"));
+        tm.createTask(new Task("a", "b", Status.NEW, 28, Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000)));
         ArrayList<String> bf = readerFile();
 
         assertEquals(2, bf.size(), "Размер не соответствует");
-        assertEquals("0,TASK,b,NEW,a,", bf.getLast(), "");
+        assertEquals("0,TASK,a,NEW,b,2019-03-28T14:33:48.000640,PT0.000000001S", bf.getLast(), "");
     }
 
     @Test
     void testCreateEpicTask() {
-        fb.createEpicTask(new EpicTask("a", "b"));
+        tm.createEpicTask(new EpicTask("a", "b"));
         ArrayList<String> bf = readerFile();
 
         assertEquals(2, bf.size(), "Размер не соответствует");
-        assertEquals("0,EPICTASK,b,NEW,a,", bf.getLast(), "");
+        assertEquals("0,EPICTASK,b,NEW,a,,", bf.getLast(), "");
     }
 
-    @Override
     @Test
     void testCreateSubTask() {
-        int epicId = fb.createEpicTask(new EpicTask("a", "b"));
-        fb.createSubTask(new SubTask("c", "d", fb.getEpicTaskByID(epicId)));
+        super.testCreateSubTask();
         ArrayList<String> bf = readerFile();
 
         assertEquals(3, bf.size(), "Размер не соответствует");
-        assertEquals("1,SUBTASK,d,NEW,c," +  epicId, bf.getLast(), "");
+        assertEquals("1,SUBTASK,a,NEW,b,0,2019-03-28T14:33:48.000640,PT0.000000001S", bf.getLast(), "");
     }
 
     @Test
     void testCreateHeading() {
-        fb.createTask(new Task("a", "b"));
+        tm.createTask(new Task("a", "b", Status.NEW, 28, Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000)));
         assertEquals(
-                "id,type,name,status,description,epic",
+                "id,type,name,status,description,epic,startTime,duration",
                 readerFile().getFirst(),
                 "Шапка неправильная"
         );
     }
 
-    @Override
     @Test
     void testClearTask() {
-        fb.createTask(new Task("a", "b"));
-        fb.clearTasks();
+        tm.createTask(new Task("a", "b", Status.NEW, 28, Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000)));
+        tm.clearTasks();
         assertEquals(1, readerFile().size(), "Tasks не были удалены");
     }
 
     @Test
     void testClearEpicTask() {
-        fb.createEpicTask(new EpicTask("a", "b"));
-        fb.clearEpicTasks();
+        tm.createEpicTask(new EpicTask("a", "b"));
+        tm.clearEpicTasks();
         assertEquals(1, readerFile().size(), "EpicTasks не были удалены");
     }
 
     @Test
     void testClearSubTask() {
-        int epicId = fb.createEpicTask(new EpicTask("a", "b"));
-        fb.createSubTask(new SubTask("c", "d", fb.getEpicTaskByID(epicId)));
-        fb.clearEpicTasks();
-        fb.clearSubTasks();
+        int epicId = tm.createEpicTask(new EpicTask("a", "b"));
+        tm.createSubTask(new SubTask("a", "b", Status.NEW, 1, tm.getEpicTaskByID(epicId) ,Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000)));
+        tm.clearEpicTasks();
+        tm.clearSubTasks();
 
         assertEquals(1, readerFile().size(), "SubTasks не были удалены");
     }
 
     @Test
     void testUpdateTask() {
-        Task task = fb.getTaskByID(fb.createTask(new Task("a", "b")));
+        Task task = tm.getTaskByID(tm.createTask(new Task("a", "b", Status.NEW, 0, Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000))));
         task.setStatus(Status.DONE);
-        fb.updateTask(task);
+        tm.updateTask(task);
         ArrayList<String> bf = readerFile();
 
         assertEquals(2, readerFile().size(), "Размер не соответствует");
-        assertEquals("0,TASK,b,DONE,a,", bf.getLast(), "Task не был обновлен");
+        assertEquals("0,TASK,a,DONE,b,2019-03-28T14:33:48.000640,PT0.000000001S", bf.getLast(), "Task не был обновлен");
     }
 
     @Test
     void testUpdateEpicTask() {
-        EpicTask epicTask = fb.getEpicTaskByID(fb.createEpicTask(new EpicTask("a", "b")));
-        epicTask.setDescription("c");
-        fb.updateEpicTask(epicTask);
+        EpicTask epicTask = tm.getEpicTaskByID(tm.createEpicTask(new EpicTask("c", "b")));
+        epicTask.setDescription("b");
+        tm.updateEpicTask(epicTask);
         ArrayList<String> bf = readerFile();
 
         assertEquals(2, readerFile().size(), "Размер не соответствует");
-        assertEquals("0,EPICTASK,b,NEW,c,", bf.getLast(), "EpicTask не был обновлен");
+        assertEquals("0,EPICTASK,b,NEW,b,,", bf.getLast(), "EpicTask не был обновлен");
     }
 
     @Test
     void testUpdateSubTask() {
-        int epicId = fb.createEpicTask(new EpicTask("a", "b"));
-        SubTask subTask = fb.getSubTaskByID(fb.createSubTask(new SubTask("c", "d", fb.getEpicTaskByID(epicId))));
+        int epicId = tm.createEpicTask(new EpicTask("a", "b"));
+        SubTask subTask = tm.getSubTaskByID(tm.createSubTask(new SubTask("b", "a", Status.NEW, 1, tm.getEpicTaskByID(epicId) ,Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000))));
         subTask.setStatus(Status.IN_PROGRESS);
-        fb.updateSubTask(subTask);
+        tm.updateSubTask(subTask);
         ArrayList<String> bf = readerFile();
 
         assertEquals(3, readerFile().size(), "Размер не соответствует");
-        assertEquals("1,SUBTASK,d,IN_PROGRESS,c," + epicId, bf.getLast(), "SubTask не был обновлен");
+        assertEquals("1,SUBTASK,b,IN_PROGRESS,a," + epicId + ",2019-03-28T14:33:48.000640,PT0.000000001S", bf.getLast(), "SubTask не был обновлен");
     }
 }

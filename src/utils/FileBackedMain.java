@@ -13,7 +13,7 @@ public class FileBackedMain {
     public static void main(String[] args) {
         File file = new File("Testfw34");
         TaskManager tm = Managers.getDefaultFileBack(file);
-        LocalDateTime test = LocalDateTime.now();
+        LocalDateTime test = LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000);
 
         tm.createTask(new Task("a", "b", Status.NEW, 28, Duration.ofNanos(1), test));
         tm.createEpicTask(new EpicTask("fghjk", "fghjkloi8uytgbhnj"));

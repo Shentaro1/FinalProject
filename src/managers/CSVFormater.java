@@ -43,7 +43,7 @@ public class CSVFormater {
     }
 
     public static String firstLine() {
-        return ("id,type,name,status,description,startTime,duration,epic\n");
+        return ("id,type,name,status,description,epic,startTime,duration\n");
     }
 
 

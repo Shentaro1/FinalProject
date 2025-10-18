@@ -15,7 +15,7 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     //конструктор копирования
     AbstractTask(AbstractTask abstractTask) {
-        this(abstractTask.id, abstractTask.duration, abstractTask.startTime, abstractTask.description, abstractTask.name, abstractTask.status);
+        this(abstractTask.id, abstractTask.duration, abstractTask.startTime, abstractTask.name, abstractTask.description, abstractTask.status);
     }
 
     //дефолтный конструктор создания

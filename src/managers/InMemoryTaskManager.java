@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     private int counterID;
@@ -35,34 +36,27 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void getPrioritizedTasks() {
-        for (Map.Entry<LocalDateTime, AbstractTask> entry : allTasks.entrySet()) {
-            System.out.println(entry.getValue());
-        }
+        allTasks.values()
+                .forEach(System.out::println);
     }
 
     //a. Получение списка всех задач.
     public ArrayList<Task> getAllTask() {
-        ArrayList<Task> resultTasks = new ArrayList<>();
-        for (Task task : tasks.values()) {
-            resultTasks.add(new Task(task));
-        }
-        return resultTasks;
+        return tasks.values().stream()
+                .map(Task::new)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ArrayList<SubTask> getAllSubTask() {
-        ArrayList<SubTask> resultSubTasks = new ArrayList<>();
-        for (SubTask subTask : subTasks.values()) {
-            resultSubTasks.add(new SubTask(subTask));
-        }
-        return resultSubTasks;
+        return subTasks.values().stream()
+                .map(SubTask::new)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ArrayList<EpicTask> getAllEpicTask() {
-        ArrayList<EpicTask> resultEpicTasks = new ArrayList<>();
-        for (EpicTask epicTask : epicTasks.values()) {
-            resultEpicTasks.add(new EpicTask(epicTask));
-        }
-        return resultEpicTasks;
+        return epicTasks.values().stream()
+                .map(EpicTask::new)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     //b. Удаление всех задач.
@@ -72,10 +66,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void clearSubTasks() {
         subTasks.clear();
-        for (EpicTask epicTask : epicTasks.values()) {
-            epicTask.getSubTasks().clear();
-            epicTask.updateStatus();
-        }
+        epicTasks.values()
+                .forEach(epicTask -> {
+                    epicTask.getSubTasks().clear();
+                    epicTask.updateStatus();
+                });
     }
 
     public void clearEpicTasks() {
@@ -217,9 +212,9 @@ public class InMemoryTaskManager implements TaskManager {
         EpicTask epicTask = epicTasks.remove(id);
         if (epicTask == null)
             return false;
-        for (SubTask subTask : epicTask.getSubTasks()) {
-            subTasks.remove(subTask.getId());
-        }
+        epicTask.getSubTasks().stream()
+                .map(SubTask::getId)
+                .forEach(subTasks::remove);
         return true;
     }
 
@@ -228,11 +223,9 @@ public class InMemoryTaskManager implements TaskManager {
         EpicTask epicTask = epicTasks.get(id);
         if (epicTask == null)
             return null;
-        ArrayList<SubTask> resultSubTasks = new ArrayList<>();
-        for (SubTask subTask : epicTask.getSubTasks()) {
-            resultSubTasks.add(new SubTask(subTask));
-        }
-        return resultSubTasks;
+        return epicTask.getSubTasks().stream()
+                .map(SubTask::new)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     //получение истории

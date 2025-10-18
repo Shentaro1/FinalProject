@@ -171,17 +171,36 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try (FileWriter fileWriter = new FileWriter(file, false);
              BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
             bufferedWriter.write(CSVFormater.firstLine());
-            for (Task task : getAllTask()) {
-                bufferedWriter.write(CSVFormater.toStringTask(task));
-            }
 
-            for (EpicTask epicTask : getAllEpicTask()) {
-                bufferedWriter.write(CSVFormater.toStringEpicTask(epicTask));
-            }
+            getAllTask().stream()
+                    .map(CSVFormater::toStringTask)
+                    .forEach(line -> {
+                        try {
+                            bufferedWriter.write(line);
+                        } catch (IOException e) {
+                            throw new ManagerSaveException(e.getMessage());
+                        }
+                    });
 
-            for (SubTask task : getAllSubTask()) {
-                bufferedWriter.write(CSVFormater.toStringSubTask(task));
-            }
+            getAllEpicTask().stream()
+                    .map(CSVFormater::toStringEpicTask)
+                    .forEach(line -> {
+                        try {
+                            bufferedWriter.write(line);
+                        } catch (IOException e) {
+                            throw new ManagerSaveException(e.getMessage());
+                        }
+                    });
+
+            getAllSubTask().stream()
+                    .map(CSVFormater::toStringSubTask)
+                    .forEach(line -> {
+                        try {
+                            bufferedWriter.write(line);
+                        } catch (IOException e) {
+                            throw new ManagerSaveException(e.getMessage());
+                        }
+                    });
 
         } catch (IOException e) {
             throw new ManagerSaveException(e.getMessage());
