@@ -128,7 +128,7 @@ public class EpicTask extends AbstractTask {
                 ", id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", status=" + getStatus() +
-                ", duration='" + getDuration() + "'" + 
+                ", duration='" + getDuration() + "'" +
                 ", startTime=" + getStartTime() +
                 "} ";
     }
