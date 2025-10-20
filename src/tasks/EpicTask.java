@@ -56,7 +56,11 @@ public class EpicTask extends AbstractTask {
             return null;
         }
 
-        return Duration.between(start, end);
+        Duration flag = Duration.ZERO;
+        for (SubTask task : subTasks) {
+             flag = flag.plus(task.getDuration());
+        }
+        return flag;
     }
 
     @Override
