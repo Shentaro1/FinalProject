@@ -1,29 +1,88 @@
 package tasks;
 import types.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class EpicTask extends AbstractTask {
     private final ArrayList<SubTask> subTasks;
+    LocalDateTime endTime;
 
     //Конструктор копирования
     public EpicTask(EpicTask epicTask) {
         super(epicTask);
         subTasks = new ArrayList<>(epicTask.getSubTasks());
+        endTime = epicTask.endTime;
     }
 
     //Дефолтный конструктор
     public EpicTask(String description, String name) {
         super(description, name);
         subTasks = new ArrayList<>();
+        endTime = null;
     }
 
     //Конструктор для создания при помощи файла
-    public EpicTask(String name, String description, Status status, int id) {
-        super(id, description, name, status);
+    public EpicTask(String name, String description, Status status, int id, Duration duration, LocalDateTime startTime) {
+        super(id, duration, startTime, description, name, status);
         this.subTasks = new ArrayList<SubTask>();
     }
 
+    @Override
+    public LocalDateTime getStartTime() {
+        if (subTasks == null || subTasks.isEmpty()) {
+            return null;
+        }
+
+        LocalDateTime flag = null;
+        for (SubTask subTask : subTasks) {
+            LocalDateTime startTime = subTask.getStartTime();
+            if (startTime != null) {
+                if (flag == null || startTime.isBefore(flag)) {
+                    flag = startTime;
+                }
+            }
+        }
+        return flag;
+    }
+
+    @Override
+    public Duration getDuration() {
+        LocalDateTime start = getStartTime();
+        LocalDateTime end = getEndTime();
+
+        if (start == null || end == null) {
+            return null;
+        }
+
+        Duration flag = Duration.ZERO;
+        for (SubTask task : subTasks) {
+             flag = flag.plus(task.getDuration());
+        }
+        return flag;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        if (subTasks == null || subTasks.isEmpty()) {
+            return null;
+        }
+
+        LocalDateTime flag = null;
+        for (SubTask subTask : subTasks) {
+            LocalDateTime startTime = subTask.getStartTime();
+            Duration duration = subTask.getDuration();
+
+            if (startTime != null && duration != null) {
+                LocalDateTime endTime = startTime.plus(duration);
+                if (flag == null || endTime.isAfter(flag)) {
+                    flag = endTime;
+                }
+            }
+        }
+        return flag;
+    }
 
     public void updateStatus() {
         if (subTasks.isEmpty()) {
@@ -73,6 +132,8 @@ public class EpicTask extends AbstractTask {
                 ", id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", status=" + getStatus() +
+                ", duration='" + getDuration() + "'" +
+                ", startTime=" + getStartTime() +
                 "} ";
     }
 

@@ -7,8 +7,10 @@ import exception.*;
 import types.Status;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
-public class FileBackedTaskManager extends InMemoryTaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     private final File file;
 
     //Конструктор для создания FileBackedTaskManager
@@ -24,9 +26,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         try (FileReader fileReader = new FileReader(file); BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             bufferedReader.readLine();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                String[] myArrayFromLine = line.split(",");
+            while (bufferedReader.ready()) {
+                String[] myArrayFromLine = new String[8];
+                String[] dp = bufferedReader.readLine().split(",");
+                System.arraycopy(dp, 0, myArrayFromLine, 0, dp.length);
                 int currentID = Integer.parseInt(myArrayFromLine[0]);
                 maxId = Math.max(currentID, maxId);
                 taskManager.setCounterID(currentID);
@@ -37,7 +40,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                                         myArrayFromLine[2],
                                         myArrayFromLine[4],
                                         Status.valueOf(myArrayFromLine[3]),
-                                        currentID
+                                        currentID,
+                                        Duration.parse(myArrayFromLine[6]),
+                                        LocalDateTime.parse(myArrayFromLine[5])
                                 )
                         );
                         break;
@@ -47,8 +52,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                                         myArrayFromLine[2],
                                         myArrayFromLine[4],
                                         Status.valueOf(myArrayFromLine[3]),
-                                        currentID
-
+                                        currentID,
+                                        myArrayFromLine[6] != null ? Duration.parse(myArrayFromLine[6]) : null,
+                                        myArrayFromLine[5] != null ? LocalDateTime.parse(myArrayFromLine[5]) : null
                                 )
                         );
                         break;
@@ -59,7 +65,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                                      myArrayFromLine[4],
                                      Status.valueOf(myArrayFromLine[3]),
                                      currentID,
-                                     taskManager.getEpicTaskByID(Integer.parseInt(myArrayFromLine[5]))
+                                     taskManager.getEpicTaskByID(Integer.parseInt(myArrayFromLine[5])),
+                                     myArrayFromLine[7] != null ? Duration.parse(myArrayFromLine[7]) : null,
+                                     myArrayFromLine[6] != null ? LocalDateTime.parse(myArrayFromLine[6]) : null
                              )
                         );
                         break;
@@ -163,17 +171,36 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (FileWriter fileWriter = new FileWriter(file, false);
              BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
             bufferedWriter.write(CSVFormater.firstLine());
-            for (Task task : getAllTask()) {
-                bufferedWriter.write(CSVFormater.toStringTask(task));
-            }
 
-            for (EpicTask epicTask : getAllEpicTask()) {
-                bufferedWriter.write(CSVFormater.toStringEpicTask(epicTask));
-            }
+            getAllTask().stream()
+                    .map(CSVFormater::toStringTask)
+                    .forEach(line -> {
+                        try {
+                            bufferedWriter.write(line);
+                        } catch (IOException e) {
+                            throw new ManagerSaveException(e.getMessage());
+                        }
+                    });
 
-            for (SubTask task : getAllSubTask()) {
-                bufferedWriter.write(CSVFormater.toStringSubTask(task));
-            }
+            getAllEpicTask().stream()
+                    .map(CSVFormater::toStringEpicTask)
+                    .forEach(line -> {
+                        try {
+                            bufferedWriter.write(line);
+                        } catch (IOException e) {
+                            throw new ManagerSaveException(e.getMessage());
+                        }
+                    });
+
+            getAllSubTask().stream()
+                    .map(CSVFormater::toStringSubTask)
+                    .forEach(line -> {
+                        try {
+                            bufferedWriter.write(line);
+                        } catch (IOException e) {
+                            throw new ManagerSaveException(e.getMessage());
+                        }
+                    });
 
         } catch (IOException e) {
             throw new ManagerSaveException(e.getMessage());

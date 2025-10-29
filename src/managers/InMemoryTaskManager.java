@@ -1,8 +1,13 @@
 package managers;
 
 import tasks.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     private int counterID;
@@ -10,11 +15,13 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, SubTask> subTasks;
     private final HashMap<Integer, EpicTask> epicTasks;
     private final HistoryManager historyManager;
+    private final TreeMap<LocalDateTime, AbstractTask> allTasks;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         tasks = new HashMap<>();
         subTasks = new HashMap<>();
         epicTasks = new HashMap<>();
+        allTasks = new TreeMap<>();
         this.historyManager = historyManager;
     }
 
@@ -24,37 +31,32 @@ public class InMemoryTaskManager implements TaskManager {
         tasks = taskManager.tasks;
         subTasks = taskManager.subTasks;
         epicTasks = taskManager.epicTasks;
+        allTasks = taskManager.allTasks;
         historyManager = taskManager.historyManager;
     }
 
-//    //Получение EpicTask по id
-//    public static EpicTask getEpicTaskBy(int id) {
-//        return this.getEpicTaskByID(id);
-//    }
+    public void getPrioritizedTasks() {
+        allTasks.values()
+                .forEach(System.out::println);
+    }
 
     //a. Получение списка всех задач.
     public ArrayList<Task> getAllTask() {
-        ArrayList<Task> resultTasks = new ArrayList<>();
-        for (Task task : tasks.values()) {
-            resultTasks.add(new Task(task));
-        }
-        return resultTasks;
+        return tasks.values().stream()
+                .map(Task::new)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ArrayList<SubTask> getAllSubTask() {
-        ArrayList<SubTask> resultSubTasks = new ArrayList<>();
-        for (SubTask subTask : subTasks.values()) {
-            resultSubTasks.add(new SubTask(subTask));
-        }
-        return resultSubTasks;
+        return subTasks.values().stream()
+                .map(SubTask::new)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ArrayList<EpicTask> getAllEpicTask() {
-        ArrayList<EpicTask> resultEpicTasks = new ArrayList<>();
-        for (EpicTask epicTask : epicTasks.values()) {
-            resultEpicTasks.add(new EpicTask(epicTask));
-        }
-        return resultEpicTasks;
+        return epicTasks.values().stream()
+                .map(EpicTask::new)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     //b. Удаление всех задач.
@@ -64,10 +66,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void clearSubTasks() {
         subTasks.clear();
-        for (EpicTask epicTask : epicTasks.values()) {
-            epicTask.getSubTasks().clear();
-            epicTask.updateStatus();
-        }
+        epicTasks.values()
+                .forEach(epicTask -> {
+                    epicTask.getSubTasks().clear();
+                    epicTask.updateStatus();
+                });
     }
 
     public void clearEpicTasks() {
@@ -107,6 +110,9 @@ public class InMemoryTaskManager implements TaskManager {
         task = new Task(task);
         task.setId(counterID++);
         tasks.put(task.getId(), task);
+        if (!isTaskOverlap(task)) {
+            allTasks.put(task.getStartTime(), task);
+        }
         return task.getId();
     }
 
@@ -120,18 +126,21 @@ public class InMemoryTaskManager implements TaskManager {
         epicTask.getSubTasks().add(subTask);
         epicTask.updateStatus();
         subTasks.put(subTask.getId(), subTask);
+        if (!isTaskOverlap(subTask)) {
+            allTasks.put(subTask.getStartTime(), subTask);
+        }
         return subTask.getId();
     }
 
     public int createEpicTask(EpicTask epicTask) {
-        if (epicTask == null)
+        if (epicTask == null) {
             return -1;
-        epicTask = new EpicTask(epicTask);
-        epicTask.setId(counterID++);
-        epicTasks.put(epicTask.getId(), epicTask);
-        return epicTask.getId();
+        }
+        EpicTask newEpic = new EpicTask(epicTask);
+        newEpic.setId(counterID++);
+        epicTasks.put(newEpic.getId(), newEpic);
+        return newEpic.getId();
     }
-
 
     //e. Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
     public boolean updateTask(Task task) {
@@ -141,6 +150,8 @@ public class InMemoryTaskManager implements TaskManager {
         currentTask.setName(task.getName());
         currentTask.setDescription(task.getDescription());
         currentTask.setStatus(task.getStatus());
+        currentTask.setDuration(task.getDuration());
+        currentTask.setStartTime(task.getStartTime());
         return true;
     }
 
@@ -162,6 +173,8 @@ public class InMemoryTaskManager implements TaskManager {
         currentSubTask.setName(subTask.getName());
         currentSubTask.setDescription(subTask.getDescription());
         currentSubTask.setStatus(subTask.getStatus());
+        currentSubTask.setDuration(subTask.getDuration());
+        currentSubTask.setStartTime(subTask.getStartTime());
         currentSubTask.getFk_epicTask().updateStatus();
         return true;
     }
@@ -173,6 +186,8 @@ public class InMemoryTaskManager implements TaskManager {
         EpicTask currentEpicTask = epicTasks.get(epicTask.getId());
         currentEpicTask.setName(epicTask.getName());
         currentEpicTask.setDescription(epicTask.getDescription());
+        currentEpicTask.setDuration(epicTask.getDuration());
+        currentEpicTask.setStartTime(epicTask.getStartTime());
         return true;
     }
 
@@ -197,9 +212,9 @@ public class InMemoryTaskManager implements TaskManager {
         EpicTask epicTask = epicTasks.remove(id);
         if (epicTask == null)
             return false;
-        for (SubTask subTask : epicTask.getSubTasks()) {
-            subTasks.remove(subTask.getId());
-        }
+        epicTask.getSubTasks().stream()
+                .map(SubTask::getId)
+                .forEach(subTasks::remove);
         return true;
     }
 
@@ -208,11 +223,9 @@ public class InMemoryTaskManager implements TaskManager {
         EpicTask epicTask = epicTasks.get(id);
         if (epicTask == null)
             return null;
-        ArrayList<SubTask> resultSubTasks = new ArrayList<>();
-        for (SubTask subTask : epicTask.getSubTasks()) {
-            resultSubTasks.add(new SubTask(subTask));
-        }
-        return resultSubTasks;
+        return epicTask.getSubTasks().stream()
+                .map(SubTask::new)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     //получение истории
@@ -222,5 +235,26 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void setCounterID(int id) {
         this.counterID = id;
+    }
+
+    //метод для проверки на пересечение задач
+    public boolean isTaskOverlap(AbstractTask task) {
+        LocalDateTime newStart = task.getStartTime();
+        LocalDateTime newEnd = task.getEndTime();
+        if (allTasks.isEmpty()) {
+            return false;
+        }
+
+        if (newStart == null || newEnd == null) {
+            return true;
+        }
+        for (Map.Entry<LocalDateTime, AbstractTask> entry : allTasks.entrySet()) {
+            LocalDateTime oldStart = entry.getKey();
+            LocalDateTime oldEnd = entry.getValue().getEndTime();
+            if (!(oldEnd.isBefore(oldStart) || oldStart.isAfter(newEnd))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
