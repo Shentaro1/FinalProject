@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 public class SubTask extends AbstractTask<SubTask> {
     private int fkEpicTask;
 
-    public SubTask(String description, String name, int fk_epicTask, LocalDateTime startTime, Duration duration) {
+    public SubTask(String description, String name, int fkEpicTask, LocalDateTime startTime, Duration duration) {
         super(description, name, startTime, duration);
-        this.fkEpicTask = fk_epicTask;
+        this.fkEpicTask = fkEpicTask;
     }
 
     public SubTask(SubTask subTask) {
@@ -16,9 +16,9 @@ public class SubTask extends AbstractTask<SubTask> {
         fkEpicTask = subTask.getFkEpicTask();
     }
 
-    public SubTask(String description, String name, int fk_epicTask) {
+    public SubTask(String description, String name, int fkEpicTask) {
         super(description, name);
-        this.fkEpicTask = fk_epicTask;
+        this.fkEpicTask = fkEpicTask;
     }
 
     public SubTask(int id, String description, String name, Status status, int fkEpicTask, LocalDateTime startTime, Duration duration) {
