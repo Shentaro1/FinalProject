@@ -1,11 +1,9 @@
 import managers.*;
 import org.junit.jupiter.api.Test;
 import utils.Managers;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class ManagersTest {
-
     @Test
     void testGetDefaultHistory() {
         HistoryManager hm = Managers.getDefaultHistory();

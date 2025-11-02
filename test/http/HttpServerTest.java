@@ -1,14 +1,11 @@
 package http;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import httpServer.HttpTaskServer;
 import managers.TaskManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import tasks.AbstractTask;
-import types.Status;
 import utils.JsonUtil;
 import utils.Managers;
 import java.io.IOException;
@@ -29,7 +26,7 @@ class HttpServerTest {
 
     @BeforeEach
     void startHttpTaskServer() throws IOException {
-        port = 8082;
+        port = 8083;
         dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         taskManager = Managers.getDefault();
         gson = new GsonBuilder()

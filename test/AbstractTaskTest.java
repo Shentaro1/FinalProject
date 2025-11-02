@@ -1,7 +1,6 @@
 import org.junit.jupiter.api.Test;
 import tasks.EpicTask;
 import tasks.Task;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class AbstractTaskTest {
