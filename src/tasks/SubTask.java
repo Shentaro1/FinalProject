@@ -4,40 +4,40 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class SubTask extends AbstractTask<SubTask> {
-    private int fk_epicTask;
+    private int fkEpicTask;
 
     public SubTask(String description, String name, int fk_epicTask, LocalDateTime startTime, Duration duration) {
         super(description, name, startTime, duration);
-        this.fk_epicTask = fk_epicTask;
+        this.fkEpicTask = fk_epicTask;
     }
 
     public SubTask(SubTask subTask) {
         super(subTask);
-        fk_epicTask = subTask.getFk_epicTask();
+        fkEpicTask = subTask.getFkEpicTask();
     }
 
     public SubTask(String description, String name, int fk_epicTask) {
         super(description, name);
-        this.fk_epicTask = fk_epicTask;
+        this.fkEpicTask = fk_epicTask;
     }
 
-    public SubTask(int id, String description, String name, Status status, int fk_epicTask, LocalDateTime startTime, Duration duration) {
+    public SubTask(int id, String description, String name, Status status, int fkEpicTask, LocalDateTime startTime, Duration duration) {
         super(id, description, name, status, startTime, duration);
-        this.fk_epicTask = fk_epicTask;
+        this.fkEpicTask = fkEpicTask;
     }
 
-    public int getFk_epicTask() {
-        return fk_epicTask;
+    public int getFkEpicTask() {
+        return fkEpicTask;
     }
 
-    public void setFk_epicTask(int fk_epicTask) {
-        this.fk_epicTask = fk_epicTask;
+    public void setFkEpicTask(int fkEpicTask) {
+        this.fkEpicTask = fkEpicTask;
     }
 
     @Override
     public String toString() {
         return "SubTask{" +
-                "fk_epicTask=" + fk_epicTask +
+                "fk_epicTask=" + fkEpicTask +
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", name='" + getName() + '\'' +

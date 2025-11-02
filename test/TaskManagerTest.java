@@ -72,7 +72,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(subTask.getName(), savedSubTask.getName(), "name не совпадают");
         assertEquals(subTask.getDescription(), savedSubTask.getDescription(), "description не совпадают");
         assertEquals(subTask.getStatus(), savedSubTask.getStatus(), "status не совпадают");
-        assertEquals(subTask.getFk_epicTask(), savedSubTask.getFk_epicTask(), "fk_epicTask не совпадают");
+        assertEquals(subTask.getFkEpicTask(), savedSubTask.getFkEpicTask(), "fk_epicTask не совпадают");
         assertEquals(subTask.getStartTime(), savedSubTask.getStartTime(), "startTime не совпадают");
         assertEquals(subTask.getDuration(), savedSubTask.getDuration(), "duration не совпадают");
     }

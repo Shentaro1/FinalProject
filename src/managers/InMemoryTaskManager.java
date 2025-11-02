@@ -157,7 +157,7 @@ public class InMemoryTaskManager implements TaskManager {
             return -1;
 
         //check: id на EpicTask может не существовать
-        if (!epicTasks.containsKey(subTask.getFk_epicTask()))
+        if (!epicTasks.containsKey(subTask.getFkEpicTask()))
             throw new NotFoundException("Subtask c id=" + subTask.getId() + " не может быть cоздан, так как ee epicTask не существует");
 
 
@@ -171,7 +171,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         //target: получение epicTask, на который ссылается subTask
-        EpicTask epicTask = epicTasks.get(subTask.getFk_epicTask());
+        EpicTask epicTask = epicTasks.get(subTask.getFkEpicTask());
 
         //target: установка id
         subTask.setId(counterID++);
@@ -248,18 +248,18 @@ public class InMemoryTaskManager implements TaskManager {
             throw new NotFoundException("Subtask c id=" + subTask.getId() + " не может быть обновлена, так как ее не существует");
 
         //check: epicTask, на который указывает subTask, может не существовать
-        if (!epicTasks.containsKey(subTask.getFk_epicTask()))
+        if (!epicTasks.containsKey(subTask.getFkEpicTask()))
             throw new NotFoundException("Subtask c id=" + subTask.getId() + " не может быть обновлена, так как ee epicTask не существует");
 
         //target: получение текущего и нового subTask
         SubTask currentSubTask = subTasks.get(subTask.getId());
 
         //target: получение epicTask, на который ссылается subTask
-        EpicTask epicTask = epicTasks.get(subTask.getFk_epicTask());
+        EpicTask epicTask = epicTasks.get(subTask.getFkEpicTask());
 
-        if (currentSubTask.getFk_epicTask() != subTask.getFk_epicTask()) {
+        if (currentSubTask.getFkEpicTask() != subTask.getFkEpicTask()) {
             //target: получение текущего epicTask, на который ссылался subTask
-            EpicTask prevEpicTask = epicTasks.get(currentSubTask.getFk_epicTask());
+            EpicTask prevEpicTask = epicTasks.get(currentSubTask.getFkEpicTask());
 
             //target: удаляем subTask из текущего epicTask
             prevEpicTask.deleteSubTasks(currentSubTask.getId());
@@ -347,7 +347,7 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager.remove(id);
 
         //target: получаем связанный epicTask
-        EpicTask epicTask = epicTasks.get(subTask.getFk_epicTask());
+        EpicTask epicTask = epicTasks.get(subTask.getFkEpicTask());
 
         //target: удаляем subTask из epicTask
         epicTask.deleteSubTasks(subTask.getId());
