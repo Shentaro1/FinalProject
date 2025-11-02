@@ -17,18 +17,18 @@ public class Main {
         tm.createTask(task2);
 
         //target: создание 2 x EpicTask
-        EpicTask epicTask1 = new EpicTask("a", "b");
-        EpicTask epicTask2 = new EpicTask("c", "d");
-        int id_epicTask1 = tm.createEpicTask(epicTask1);
-        tm.createEpicTask(epicTask2);
+        EpicTask epicTask = new EpicTask("a", "b");
+        EpicTask eppicTask = new EpicTask("c", "d");
+        int id_epicTask1 = tm.createEpicTask(epicTask);
+        tm.createEpicTask(eppicTask);
 
         //target: создание 3 x SubTask c привязкой к одному EpicTask
-        SubTask subTask1 = new SubTask("a", "b", id_epicTask1);
-        SubTask subTask2 = new SubTask("c", "d", id_epicTask1);
-        SubTask subTask3 = new SubTask("e", "f", id_epicTask1);
-        tm.createSubTask(subTask1);
-        tm.createSubTask(subTask2);
-        tm.createSubTask(subTask3);
+        SubTask subTask = new SubTask("a", "b", id_epicTask1);
+        SubTask subTaskTow = new SubTask("c", "d", id_epicTask1);
+        SubTask subTaskThree = new SubTask("e", "f", id_epicTask1);
+        tm.createSubTask(subTask);
+        tm.createSubTask(subTaskTow);
+        tm.createSubTask(subTaskThree);
 
         //target: 1 запрос (пустой)
         System.out.println(tm.getHistory());
