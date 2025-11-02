@@ -322,7 +322,7 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean deleteTaskByID(int id) {
         Task task;
 
-        if ((task=tasks.remove(id)) == null) {
+        if ((task = tasks.remove(id)) == null) {
             return false;
         }
 
@@ -370,8 +370,8 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager.remove(id);
 
         //target: удаление связанных subTask
-        for (int id_subTask : epicTask.getSubTasks()) {
-            deleteSubTaskByID(id_subTask);
+        for (int idSubTask : epicTask.getSubTasks()) {
+            deleteSubTaskByID(idSubTask);
         }
 
         epicTasks.remove(id);
