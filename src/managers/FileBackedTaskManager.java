@@ -159,7 +159,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
     }
 
-    static public FileBackedTaskManager loadFromFile (File file) {
+    public static FileBackedTaskManager loadFromFile(File file) {
         InMemoryTaskManager tm = new InMemoryTaskManager(new InMemoryHistoryManager());
         int maxId = -1;
 
@@ -186,7 +186,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                                             record[2],
                                             Status.valueOf(record[3]),
                                             record[6] != null ? LocalDateTime.parse(record[6]) : null,
-                                            record[7] != null ? Duration.ofMinutes(Integer.parseInt(record[7])): null
+                                            record[7] != null ? Duration.ofMinutes(Integer.parseInt(record[7])) : null
                                     )
                             );
                             break;
@@ -198,7 +198,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                                             Status.valueOf(record[3]),
                                             Integer.parseInt(record[5]),
                                             record[6] != null ? LocalDateTime.parse(record[6]) : null,
-                                            record[7] != null ? Duration.ofMinutes(Integer.parseInt(record[7])): null
+                                            record[7] != null ? Duration.ofMinutes(Integer.parseInt(record[7])) : null
                                     )
                             );
                             break;
@@ -217,7 +217,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 }
             }
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());;
+            System.out.println(ex.getMessage());
         }
 
         tm.setCounterID(maxId + 1);
