@@ -105,7 +105,7 @@ public abstract class AbstractTask<T extends AbstractTask<T>> {
         return Objects.hashCode(id);
     }
 
-    abstract public T copy();
+    public abstract T copy();
 
     @Override
     public String toString() {

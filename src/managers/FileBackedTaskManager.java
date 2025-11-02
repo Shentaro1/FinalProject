@@ -147,7 +147,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                                 subTask.getName(),
                                 subTask.getStatus().name().toUpperCase(),
                                 subTask.getDescription(),
-                                subTask.getFk_epicTask(),
+                                subTask.getFkEpicTask(),
                                 subTask.getStartTime() != null ? subTask.getStartTime() : "",
                                 subTask.getDuration() != null ? subTask.getDuration().toMinutes() : ""
                         )
