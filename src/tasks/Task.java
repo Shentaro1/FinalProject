@@ -1,37 +1,34 @@
 package tasks;
+
 import types.Status;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class Task extends AbstractTask {
+public class Task extends AbstractTask<Task> {
 
-    //Дефолтный конструктор со временем
     public Task(String description, String name) {
         super(description, name);
     }
 
-    //Конструктор копирования
     public Task(Task task) {
         super(task);
     }
 
-    //Конструктор создания при помощи файла с временем
-    public Task(String name, String description, Status status, int id, Duration duration, LocalDateTime startTime) {
-        super(id, duration, startTime, name, description, status);
+    public Task(int id, String description, String name, Status status) {
+        super(id, description, name, status);
+    }
+
+    public Task(int id, String description, String name, Status status, LocalDateTime startTime, Duration duration) {
+        super(id, description, name, status, startTime, duration);
+    }
+
+    public Task(String description, String name, LocalDateTime startTime, Duration duration) {
+        super(description, name, startTime, duration);
     }
 
     @Override
-    public LocalDateTime getEndTime() {
-        if (getStartTime() == null || getDuration() == null) {
-            return null;
-        }
-        return getStartTime().plus(getDuration());
-    }
-
-
-    //set
-    public void setStatus(Status status) {
-        this.status = status;
+    public Task copy() {
+        return new Task(this);
     }
 
     @Override
@@ -41,14 +38,8 @@ public class Task extends AbstractTask {
                 ", id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", status=" + getStatus() +
-                ", duration=" + getDuration() +
                 ", startTime=" + getStartTime() +
+                ", duration=" + getDuration() +
                 "} ";
     }
-
-    @Override
-    public Task copy() {
-        return new Task(this);
-    }
-
 }
