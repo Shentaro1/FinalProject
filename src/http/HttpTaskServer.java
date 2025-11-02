@@ -1,4 +1,4 @@
-package httpServer;
+package http;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public final class HttpTaskServer {
-    private final static Charset CHARSET = StandardCharsets.UTF_8;
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
     private final HttpServer httpServer;
 
     public HttpTaskServer(int port, TaskManager taskManager, Gson gson) throws IOException {
