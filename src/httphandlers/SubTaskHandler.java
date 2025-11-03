@@ -1,15 +1,15 @@
-package httpHandlers;
+package httphandlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import exception.NotFoundException;
 import managers.TaskManager;
-import tasks.Task;
+import tasks.SubTask;
 import utils.JsonUtil;
 import java.io.IOException;
 
-public final class TaskHandler extends BaseHttpHandler {
-    public TaskHandler(TaskManager taskManager, Gson gson) {
+public final class SubTaskHandler extends BaseHttpHandler {
+    public SubTaskHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 
@@ -21,21 +21,21 @@ public final class TaskHandler extends BaseHttpHandler {
 
         try {
             if (requestMethod.equals("GET") && pathLength == 2) {
-                String result = JsonUtil.convertToJson(taskManager.getAllTask(), gson);
+                String result = JsonUtil.convertToJson(taskManager.getAllSubTask(), gson);
                 sendText(exchange, result);
             } else if (requestMethod.equals("GET") && pathLength == 3) {
-                Task task = taskManager.getTaskByID(Integer.parseInt(path[2]));
+                SubTask task = taskManager.getSubTaskByID(Integer.parseInt(path[2]));
                 sendText(exchange, JsonUtil.convertToJson(task, gson));
             } else if (requestMethod.equals("DELETE") && pathLength == 3) {
                 final int id = Integer.parseInt(path[2]);
-                Task delTask = taskManager.getTaskByID(id);
-                taskManager.deleteTaskByID(id);
+                SubTask delTask = taskManager.getSubTaskByID(id);
+                taskManager.deleteSubTaskByID(id);
                 sendText(exchange, JsonUtil.convertToJson(delTask, gson));
             } else if (requestMethod.equals("POST") && pathLength == 3) {
                 String body = getBodyRequest(exchange);
-                Task task = JsonUtil.convertFromJson(body, Task.class, gson);
+                SubTask task = JsonUtil.convertFromJson(body, SubTask.class, gson);
                 task.setId(Integer.parseInt(path[2]));
-                final int codeError = taskManager.updateTask(task);
+                final int codeError = taskManager.updateSubTask(task);
 
                 if (codeError == -3)
                     sendHasOverlaps(exchange);
@@ -43,7 +43,7 @@ public final class TaskHandler extends BaseHttpHandler {
                     sendNotBody(exchange);
             } else if (requestMethod.equals("POST") && pathLength == 2) {
                 String body = getBodyRequest(exchange);
-                final int taskId = taskManager.createTask(JsonUtil.convertFromJson(body, Task.class, gson));
+                final int taskId = taskManager.createSubTask(JsonUtil.convertFromJson(body, SubTask.class, gson));
 
                 if (taskId == -3)
                     sendHasOverlaps(exchange);

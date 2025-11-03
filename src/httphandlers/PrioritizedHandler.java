@@ -1,4 +1,4 @@
-package httpHandlers;
+package httphandlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
@@ -6,8 +6,8 @@ import managers.TaskManager;
 import utils.JsonUtil;
 import java.io.IOException;
 
-public final class HistoryHandler extends BaseHttpHandler {
-    public HistoryHandler(TaskManager taskManager, Gson gson) {
+public final class PrioritizedHandler extends BaseHttpHandler {
+    public PrioritizedHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 
@@ -19,7 +19,7 @@ public final class HistoryHandler extends BaseHttpHandler {
 
         try {
             if (requestMethod.equals("GET") && pathLength == 2) {
-                String result = JsonUtil.convertToJson(taskManager.getHistory(), gson);
+                String result = JsonUtil.convertToJson(taskManager.getPrioritizedTasks(), gson);
                 sendText(exchange, result);
             } else {
                 sendNotFound(exchange);

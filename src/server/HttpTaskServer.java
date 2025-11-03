@@ -1,7 +1,7 @@
 package server;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpServer;
-import httpHandlers.*;
+import httphandlers.*;
 import managers.TaskManager;
 import utils.JsonUtil;
 import utils.Managers;
