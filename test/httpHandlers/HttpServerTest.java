@@ -1,9 +1,10 @@
-package http;
+package httpHandlers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import managers.TaskManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import server.HttpTaskServer;
 import tasks.AbstractTask;
 import utils.JsonUtil;
 import utils.Managers;
