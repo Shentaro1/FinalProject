@@ -1,62 +1,49 @@
 package tasks;
 import types.Status;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class SubTask extends AbstractTask {
-    EpicTask fkEpicTask;
+public class SubTask extends AbstractTask<SubTask> {
+    private int fkEpicTask;
 
-    //Конструктор копирования
-    public SubTask(SubTask subTask) {
-        super(subTask);
-        fkEpicTask = subTask.getFk_epicTask();
+    public SubTask(String description, String name, int fkEpicTask, LocalDateTime startTime, Duration duration) {
+        super(description, name, startTime, duration);
+        this.fkEpicTask = fkEpicTask;
     }
 
-    //Дефолтный конструктор
-    public SubTask(String description, String name, EpicTask fkEpicTask) {
+    public SubTask(SubTask subTask) {
+        super(subTask);
+        fkEpicTask = subTask.getFkEpicTask();
+    }
+
+    public SubTask(String description, String name, int fkEpicTask) {
         super(description, name);
         this.fkEpicTask = fkEpicTask;
     }
 
-    //Конструктор для создания при помощи файла
-    public SubTask(String name, String description, Status status, int id, EpicTask epicTask, Duration duration, LocalDateTime startTime) {
-        super(id, duration, startTime, name, description, status);
-        this.fkEpicTask = epicTask;
-    }
-
-    @Override
-    public LocalDateTime getEndTime() {
-        if (getStartTime() == null || getDuration() == null) {
-            return null;
-        }
-        return getStartTime().plus(getDuration());
-    }
-
-    //get
-    public EpicTask getFk_epicTask() {
-        return fkEpicTask;
-    }
-
-    //set
-    public void setFk_epicTask(EpicTask fkEpicTask) {
+    public SubTask(int id, String description, String name, Status status, int fkEpicTask, LocalDateTime startTime, Duration duration) {
+        super(id, description, name, status, startTime, duration);
         this.fkEpicTask = fkEpicTask;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public int getFkEpicTask() {
+        return fkEpicTask;
+    }
+
+    public void setFkEpicTask(int fkEpicTask) {
+        this.fkEpicTask = fkEpicTask;
     }
 
     @Override
     public String toString() {
         return "SubTask{" +
-                "fk_epicTask=" + fkEpicTask.getId() +
+                "fk_epicTask=" + fkEpicTask +
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", status=" + getStatus() +
-                ", duration=" + getDuration() +
                 ", startTime=" + getStartTime() +
+                ", duration=" + getDuration() +
                 "} ";
     }
 

@@ -1,3 +1,13 @@
-id,type,name,status,description,startTime,duration,epic
-0,TASK,b,NEW,a,-999999999-01-01T00:00,PT0S
-1,TASK, r567890okijm,NEW,ertyuiop,-999999999-01-01T00:00,PT0S
+id,type,name,status,description,epic,startTime,duration
+2,TASK,b,NEW,a,,,
+5,TASK,b,NEW,a,,,
+8,TASK,b,NEW,a,,,
+11,TASK,b,NEW,a,,,
+3,EPIC,d,NEW,c,,,
+6,EPIC,d,NEW,c,,,
+9,EPIC,d,NEW,c,,,
+12,EPIC,d,NEW,c,,,
+4,SUBTASK,f,NEW,e,3,,
+7,SUBTASK,f,NEW,e,6,,
+10,SUBTASK,f,NEW,e,9,,
+13,SUBTASK,f,NEW,e,12,,

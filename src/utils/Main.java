@@ -1,28 +1,57 @@
 package utils;
+import exception.NotFoundException;
+import managers.TaskManager;
+import tasks.EpicTask;
+import tasks.SubTask;
+import tasks.Task;
 
-import managers.HistoryManager;
-import managers.InMemoryTaskManager;
-import tasks.AbstractTask;
-
-import java.util.ArrayList;
 
 public class Main {
-    public static void main(String[] args) {
-        InMemoryTaskManager tm = new InMemoryTaskManager(new HistoryManager() {
-            @Override
-            public void add(AbstractTask task) {
+    public static void main(String[] args) throws NotFoundException {
+        TaskManager tm = Managers.getDefault();
 
-            }
+        //target: создание 2 x Task
+        Task task1 = new Task("a", "b");
+        Task task2 = new Task("c", "d");
+        tm.createTask(task1);
+        tm.createTask(task2);
 
-            @Override
-            public ArrayList<AbstractTask> getHistory() {
-                return null;
-            }
+        //target: создание 2 x EpicTask
+        EpicTask epicTask = new EpicTask("a", "b");
+        EpicTask eppicTask = new EpicTask("c", "d");
+        int idEpicTaskk = tm.createEpicTask(epicTask);
+        tm.createEpicTask(eppicTask);
 
-            @Override
-            public void remove(int id) {
+        //target: создание 3 x SubTask c привязкой к одному EpicTask
+        SubTask subTask = new SubTask("a", "b", idEpicTaskk);
+        SubTask subTaskTow = new SubTask("c", "d", idEpicTaskk);
+        SubTask subTaskThree = new SubTask("e", "f", idEpicTaskk);
+        tm.createSubTask(subTask);
+        tm.createSubTask(subTaskTow);
+        tm.createSubTask(subTaskThree);
 
-            }
-        });
+        //target: 1 запрос (пустой)
+        System.out.println(tm.getHistory());
+
+        tm.getTaskByID(0);
+        tm.getTaskByID(1);
+        tm.getEpicTaskByID(2);
+        tm.getEpicTaskByID(3);
+        tm.getSubTaskByID(4);
+        tm.getSubTaskByID(5);
+        tm.getSubTaskByID(6);
+
+        //target: 2 запрос (последовательный)
+        System.out.println(tm.getHistory());
+
+        tm.deleteTaskByID(0);
+
+        //target: 3 запрос (удаление Task)
+        System.out.println(tm.getHistory());
+
+        tm.deleteEpicTaskByID(idEpicTaskk);
+
+        //target: 3 запрос (удаление EpicTask c 3 x SubTask)
+        System.out.println(tm.getHistory());
     }
 }

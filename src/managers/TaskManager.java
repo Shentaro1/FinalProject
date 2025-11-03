@@ -1,15 +1,15 @@
 package managers;
-
+import exception.NotFoundException;
 import tasks.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
+    List<Task> getAllTask();
 
-    ArrayList<Task> getAllTask();
+    List<SubTask> getAllSubTask();
 
-    ArrayList<SubTask> getAllSubTask();
-
-    ArrayList<EpicTask> getAllEpicTask();
+    List<EpicTask> getAllEpicTask();
 
     void clearTasks();
 
@@ -17,23 +17,23 @@ public interface TaskManager {
 
     void clearEpicTasks();
 
-    Task getTaskByID(int id);
+    Task getTaskByID(int id) throws NotFoundException;
 
-    SubTask getSubTaskByID(int id);
+    SubTask getSubTaskByID(int id) throws NotFoundException;
 
-    EpicTask getEpicTaskByID(int id);
+    EpicTask getEpicTaskByID(int id) throws NotFoundException;
 
     int createTask(Task task);
 
-    int createSubTask(SubTask subTask);
+    int createSubTask(SubTask subTask) throws NotFoundException;
 
     int createEpicTask(EpicTask epicTask);
 
-    boolean updateTask(Task task);
+    int updateTask(Task task) throws NotFoundException;
 
-    boolean updateSubTask(SubTask subTask);
+    int updateSubTask(SubTask subTask) throws NotFoundException;
 
-    boolean updateEpicTask(EpicTask epicTask);
+    int updateEpicTask(EpicTask epicTask) throws NotFoundException;
 
     boolean deleteTaskByID(int id);
 
@@ -41,10 +41,9 @@ public interface TaskManager {
 
     boolean deleteEpicTaskByID(int id);
 
-    ArrayList<SubTask> getAllSubTaskByEpicTask(int id);
+    List<SubTask> getAllSubTaskByEpicTask(int id) throws NotFoundException;
 
-    ArrayList<AbstractTask> getHistory();
+    ArrayList<AbstractTask<?>> getHistory();
 
-    void getPrioritizedTasks();
-
+    List<AbstractTask<?>> getPrioritizedTasks();
 }

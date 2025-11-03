@@ -1,18 +1,15 @@
+import exception.NotFoundException;
 import managers.FileBackedTaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.*;
-import types.Status;
 import utils.Managers;
-
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 
@@ -38,39 +35,39 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     @BeforeEach
     void createTaskManager() throws IOException {
         file = File.createTempFile("test", "csv");
-        tm = (FileBackedTaskManager) Managers.getDefaultFileBack(file);
+        tm = (FileBackedTaskManager) Managers.getFileBackedManager(file);
     }
 
     @Test
     void testCreateTask() {
-        tm.createTask(new Task("a", "b", Status.NEW, 28, Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000)));
+        super.testCreateTask();
         ArrayList<String> bf = readerFile();
 
         assertEquals(2, bf.size(), "Размер не соответствует");
-        assertEquals("0,TASK,a,NEW,b,2019-03-28T14:33:48.000640,PT0.000000001S", bf.getLast(), "");
+        assertEquals("0,TASK,b,NEW,a,,,", bf.getLast(), "");
     }
 
     @Test
     void testCreateEpicTask() {
-        tm.createEpicTask(new EpicTask("a", "b"));
+        super.testCreateEpicTask();
         ArrayList<String> bf = readerFile();
 
         assertEquals(2, bf.size(), "Размер не соответствует");
-        assertEquals("0,EPICTASK,b,NEW,a,,", bf.getLast(), "");
+        assertEquals("0,EPIC,b,NEW,a,,,", bf.getLast(), "");
     }
 
     @Test
-    void testCreateSubTask() {
+    void testCreateSubTask() throws NotFoundException {
         super.testCreateSubTask();
         ArrayList<String> bf = readerFile();
 
         assertEquals(3, bf.size(), "Размер не соответствует");
-        assertEquals("1,SUBTASK,a,NEW,b,0,2019-03-28T14:33:48.000640,PT0.000000001S", bf.getLast(), "");
+        assertEquals("1,SUBTASK,d,NEW,c,0,,", bf.getLast(), "");
     }
 
     @Test
     void testCreateHeading() {
-        tm.createTask(new Task("a", "b", Status.NEW, 28, Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000)));
+        tm.createTask(new Task("a", "b"));
         assertEquals(
                 "id,type,name,status,description,epic,startTime,duration",
                 readerFile().getFirst(),
@@ -80,59 +77,47 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
     @Test
     void testClearTask() {
-        tm.createTask(new Task("a", "b", Status.NEW, 28, Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000)));
-        tm.clearTasks();
+        super.testClearTask();
         assertEquals(1, readerFile().size(), "Tasks не были удалены");
     }
 
     @Test
     void testClearEpicTask() {
-        tm.createEpicTask(new EpicTask("a", "b"));
-        tm.clearEpicTasks();
+        super.testClearEpicTask();
         assertEquals(1, readerFile().size(), "EpicTasks не были удалены");
     }
 
     @Test
-    void testClearSubTask() {
-        int epicId = tm.createEpicTask(new EpicTask("a", "b"));
-        tm.createSubTask(new SubTask("a", "b", Status.NEW, 1, tm.getEpicTaskByID(epicId) ,Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000)));
-        tm.clearEpicTasks();
-        tm.clearSubTasks();
+    void testClearSubTask() throws NotFoundException {
+        super.testClearSubTask();
 
-        assertEquals(1, readerFile().size(), "SubTasks не были удалены");
+        assertEquals(2, readerFile().size(), "SubTasks не были удалены");
     }
 
     @Test
-    void testUpdateTask() {
-        Task task = tm.getTaskByID(tm.createTask(new Task("a", "b", Status.NEW, 0, Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000))));
-        task.setStatus(Status.DONE);
-        tm.updateTask(task);
+    void testUpdateTask() throws NotFoundException {
+        super.testUpdateTask();
         ArrayList<String> bf = readerFile();
 
         assertEquals(2, readerFile().size(), "Размер не соответствует");
-        assertEquals("0,TASK,a,DONE,b,2019-03-28T14:33:48.000640,PT0.000000001S", bf.getLast(), "Task не был обновлен");
+        assertEquals("0,TASK,c,NEW,a,,,", bf.getLast(), "Task не был обновлен");
     }
 
     @Test
-    void testUpdateEpicTask() {
-        EpicTask epicTask = tm.getEpicTaskByID(tm.createEpicTask(new EpicTask("c", "b")));
-        epicTask.setDescription("b");
-        tm.updateEpicTask(epicTask);
+    void testUpdateEpicTask() throws NotFoundException {
+        super.testUpdateEpicTask();
         ArrayList<String> bf = readerFile();
 
         assertEquals(2, readerFile().size(), "Размер не соответствует");
-        assertEquals("0,EPICTASK,b,NEW,b,,", bf.getLast(), "EpicTask не был обновлен");
+        assertEquals("0,EPIC,c,NEW,a,,,", bf.getLast(), "EpicTask не был обновлен");
     }
 
     @Test
-    void testUpdateSubTask() {
-        int epicId = tm.createEpicTask(new EpicTask("a", "b"));
-        SubTask subTask = tm.getSubTaskByID(tm.createSubTask(new SubTask("b", "a", Status.NEW, 1, tm.getEpicTaskByID(epicId) ,Duration.ofNanos(1), LocalDateTime.of(2019, 03, 28, 14, 33, 48, 640000))));
-        subTask.setStatus(Status.IN_PROGRESS);
-        tm.updateSubTask(subTask);
+    void testUpdateSubTask() throws NotFoundException {
+        super.testUpdateSubTask();
         ArrayList<String> bf = readerFile();
 
         assertEquals(3, readerFile().size(), "Размер не соответствует");
-        assertEquals("1,SUBTASK,b,IN_PROGRESS,a," + epicId + ",2019-03-28T14:33:48.000640,PT0.000000001S", bf.getLast(), "SubTask не был обновлен");
+        assertEquals("1,SUBTASK,c,NEW,a,0,,", bf.getLast(), "SubTask не был обновлен");
     }
 }

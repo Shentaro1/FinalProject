@@ -1,127 +1,60 @@
 package tasks;
 import types.Status;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class EpicTask extends AbstractTask {
-    private final ArrayList<SubTask> subTasks;
-    LocalDateTime endTime;
+public class EpicTask extends AbstractTask<EpicTask> {
+    private final ArrayList<Integer> subTasks;
 
-    //Конструктор копирования
     public EpicTask(EpicTask epicTask) {
         super(epicTask);
-        subTasks = new ArrayList<>(epicTask.getSubTasks());
-        endTime = epicTask.endTime;
+        subTasks = epicTask.getSubTasks();
     }
 
-    //Дефолтный конструктор
     public EpicTask(String description, String name) {
         super(description, name);
         subTasks = new ArrayList<>();
-        endTime = null;
     }
 
-    //Конструктор для создания при помощи файла
-    public EpicTask(String name, String description, Status status, int id, Duration duration, LocalDateTime startTime) {
-        super(id, duration, startTime, description, name, status);
-        this.subTasks = new ArrayList<SubTask>();
+    public EpicTask(int id, String description, String name, Status status) {
+        super(id, description, name, status);
+        subTasks = new ArrayList<>();
     }
 
-    @Override
-    public LocalDateTime getStartTime() {
-        if (subTasks == null || subTasks.isEmpty()) {
-            return null;
-        }
-
-        LocalDateTime flag = null;
-        for (SubTask subTask : subTasks) {
-            LocalDateTime startTime = subTask.getStartTime();
-            if (startTime != null) {
-                if (flag == null || startTime.isBefore(flag)) {
-                    flag = startTime;
-                }
-            }
-        }
-        return flag;
+    public EpicTask(String description, String name, LocalDateTime startTime, Duration duration) {
+        super(description, name, startTime, duration);
+        subTasks = new ArrayList<>();
     }
 
-    @Override
-    public Duration getDuration() {
-        LocalDateTime start = getStartTime();
-        LocalDateTime end = getEndTime();
-
-        if (start == null || end == null) {
-            return null;
-        }
-
-        Duration flag = Duration.ZERO;
-        for (SubTask task : subTasks) {
-             flag = flag.plus(task.getDuration());
-        }
-        return flag;
+    public EpicTask(int id, String description, String name, Status status, LocalDateTime startTime, Duration duration) {
+        super(id, description, name, status, startTime, duration);
+        subTasks = new ArrayList<>();
     }
 
-    @Override
-    public LocalDateTime getEndTime() {
-        if (subTasks == null || subTasks.isEmpty()) {
-            return null;
-        }
-
-        LocalDateTime flag = null;
-        for (SubTask subTask : subTasks) {
-            LocalDateTime startTime = subTask.getStartTime();
-            Duration duration = subTask.getDuration();
-
-            if (startTime != null && duration != null) {
-                LocalDateTime endTime = startTime.plus(duration);
-                if (flag == null || endTime.isAfter(flag)) {
-                    flag = endTime;
-                }
-            }
-        }
-        return flag;
+    public ArrayList<Integer> getSubTasks() {
+        return new ArrayList<>(subTasks);
     }
 
-    public void updateStatus() {
-        if (subTasks.isEmpty()) {
-            status = Status.NEW;
-            return;
-        }
+    public int addSubTasks(int id) {
+        //error: попытка добавить уже существующий id
+        if (subTasks.contains(id))
+            return -1;
 
-        boolean isExistStatusNEW = false;
-        boolean isExistStatusDONE = false;
-        for (SubTask subTask : subTasks) {
-            switch (subTask.getStatus()) {
-                case IN_PROGRESS:
-                    status = Status.IN_PROGRESS;
-                    return;
-                case NEW:
-                    if (isExistStatusDONE) {
-                        status = Status.IN_PROGRESS;
-                        return;
-                    }
-                    isExistStatusNEW = true;
-                    break;
-                case DONE:
-                    if (isExistStatusNEW) {
-                        status = Status.IN_PROGRESS;
-                        return;
-                    }
-                    isExistStatusDONE = true;
-                    break;
-            }
-        }
-        if (isExistStatusDONE)
-            status = Status.DONE;
-        else
-            status = Status.NEW;
+        subTasks.add(id);
+        return 0;
     }
 
-    //get
-    public ArrayList<SubTask> getSubTasks() {
-        return subTasks;
+    public int deleteSubTasks(int id) {
+        //error: не удалось найти элемент
+        if (!subTasks.remove(Integer.valueOf(id)))
+            return -1;
+
+        return 0;
+    }
+
+    public void clearSubTasks() {
+        subTasks.clear();
     }
 
     @Override
@@ -132,8 +65,8 @@ public class EpicTask extends AbstractTask {
                 ", id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", status=" + getStatus() +
-                ", duration='" + getDuration() + "'" +
                 ", startTime=" + getStartTime() +
+                ", duration=" + getDuration() +
                 "} ";
     }
 

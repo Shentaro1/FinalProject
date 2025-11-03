@@ -1,98 +1,81 @@
 package managers;
-
 import tasks.AbstractTask;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
-public class InMemoryHistoryManager<T> implements HistoryManager {
-    private Node<T> head;
-    private Node<T> tail;
-    private int size;
-    private Map<Integer, Node<T>> history = new HashMap<>();
+public class InMemoryHistoryManager implements HistoryManager {
+    private static class Node {
+        AbstractTask<?> item;
+        Node next;
+        Node prev;
 
-    @Override
-    public void add(AbstractTask abstractTask) {
-        linkLast(abstractTask);
+        Node(Node prev, AbstractTask<?> item, Node next) {
+            this.item = item;
+            this.next = next;
+            this.prev = prev;
+        }
     }
 
-    @Override
+    private Node head;
+    private Node tail;
+    private final HashMap<Integer, Node> hashTable;
+
+    public InMemoryHistoryManager() {
+        this.hashTable = new HashMap<>();
+    }
+
+    public void add(AbstractTask<?> task) {
+        linkLast(task);
+    }
+
     public void remove(int id) {
-        removeNode(id);
+        Node x;
+        if ((x = hashTable.remove(id)) != null)
+            removeNode(x);
     }
 
-    @Override
-    public ArrayList<AbstractTask> getHistory() {
-        ArrayList<AbstractTask> historyList = new ArrayList<>(history.size());
-        Node<T> current = head;
-        while (current != null) {
-            historyList.add(current.data.copy());
-            current = current.next;
-        }
-        return historyList;
-    }
+    private void linkLast(AbstractTask<?> e) {
+        final Node l = tail;
+        final Node newNode = new Node(l, e, null);
+        tail = newNode;
 
-    private static class Node<T> {
-        public AbstractTask data;
-        Node<T> next;
-        Node<T> prev;
-
-        public Node(AbstractTask data) {
-            this.data = data;
-            this.prev = null;
-            this.next = null;
-        }
-    }
-
-    private void linkLast(AbstractTask abstractTask) {
-        if (abstractTask == null) {
-            return;
-        }
-
-        if (history.containsKey(abstractTask.getId())) {
-            remove(abstractTask.getId());
-        }
-
-        Node<T> newNode = new Node<>(abstractTask);
-
-        if (head == null) {
+        if (l == null)
             head = newNode;
-            tail = newNode;
-        } else {
-            tail.next = newNode;
-            newNode.prev = tail;
-            tail = newNode;
-        }
-        size++;
-        history.put(abstractTask.getId(), newNode);
+        else
+            l.next = newNode;
+
+        Node prevNode;
+
+        if ((prevNode = hashTable.put(e.getId(), newNode)) != null)
+            removeNode(prevNode);
     }
 
-    private void removeNode(int id) {
-        Node<T> nodeToRemove = history.get(id);
+    private void removeNode(Node x) {
+        final AbstractTask<?> element = x.item;
+        final Node next = x.next;
+        final Node prev = x.prev;
 
-        if (nodeToRemove == null || head == null) {
-            return;
-        }
-
-        if (nodeToRemove == head && nodeToRemove == tail) {
-            head = null;
-            tail = null;
-        } else if (nodeToRemove == head) {
-            head = head.next;
-            head.prev = null;
-        } else if (nodeToRemove == tail) {
-            tail = tail.prev;
-            tail.next = null;
+        if (prev == null) {
+            head = next;
         } else {
-            nodeToRemove.prev.next = nodeToRemove.next;
-            nodeToRemove.next.prev = nodeToRemove.prev;
+            prev.next = next;
+            x.prev = null;
         }
 
-        nodeToRemove.next = null;
-        nodeToRemove.prev = null;
+        if (next == null) {
+            tail = prev;
+        } else {
+            next.prev = prev;
+            x.next = null;
+        }
 
-        history.remove(id);
-        size--;
+        x.item = null;
+    }
+
+    public ArrayList<AbstractTask<?>> getTasks() {
+        ArrayList<AbstractTask<?>> resultList = new ArrayList<>();
+        for (Node x = head; x != null; x = x.next)
+            resultList.add(x.item.copy());
+        return resultList;
     }
 }

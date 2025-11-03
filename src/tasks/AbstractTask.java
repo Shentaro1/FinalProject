@@ -1,41 +1,42 @@
 package tasks;
 import types.Status;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public abstract class AbstractTask implements Comparable<AbstractTask> {
+public abstract class AbstractTask<T extends AbstractTask<T>> {
     private int id;
-    private Duration duration;
-    private LocalDateTime startTime;
     private String name;
     private String description;
-    protected Status status;
+    private Status status;
+    private Duration duration;
+    private LocalDateTime startTime;
+    private final String typeName;
 
-    //конструктор копирования
-    AbstractTask(AbstractTask abstractTask) {
-        this(abstractTask.id, abstractTask.duration, abstractTask.startTime, abstractTask.name, abstractTask.description, abstractTask.status);
+    AbstractTask(AbstractTask<T> abstractTask) {
+        this(abstractTask.id, abstractTask.description, abstractTask.name, abstractTask.status, abstractTask.startTime, abstractTask.duration);
     }
 
-    //дефолтный конструктор создания
+    AbstractTask(int id, String description, String name, Status status) {
+        this(id, description, name, status,null, null);
+    }
+
     AbstractTask(String description, String name) {
-        this.id = 0;
-        this.name = name;
-        this.description = description;
-        this.status = Status.NEW;
-        this.duration = null;
-        this.startTime = null;
+        this(0, description, name, Status.NEW, null, null);
     }
 
-    //конструктор для сохранения из файла со временем
-    public AbstractTask(int id, Duration duration, LocalDateTime startTime, String name, String description, Status status) {
-        this.id = id;
-        this.duration = duration;
-        this.startTime = startTime;
-        this.name = name;
+    AbstractTask(String description, String name, LocalDateTime startTime, Duration duration) {
+        this(0, description, name, Status.NEW, startTime, duration);
+    }
+
+    AbstractTask(int id, String description, String name, Status status, LocalDateTime startTime, Duration duration) {
         this.description = description;
+        this.name = name;
+        this.id = id;
         this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
+        this.typeName = this.getClass().getSimpleName();
     }
 
     //set
@@ -49,6 +50,10 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public void setDuration(Duration duration) {
@@ -84,14 +89,14 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         return startTime;
     }
 
-    //метод расчитывающий дату и время завершения задачи
-    public abstract LocalDateTime getEndTime();
+    public LocalDateTime getEndTime() {
+        return (startTime == null || duration == null) ? null : startTime.plus(duration);
+    }
 
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (!(o instanceof AbstractTask)) return false;
-        AbstractTask that = (AbstractTask) o;
+        if (!(o instanceof AbstractTask<?> that)) return false;
         return id == that.id;
     }
 
@@ -100,19 +105,17 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         return Objects.hashCode(id);
     }
 
-    public abstract AbstractTask copy();
+    public abstract T copy();
 
     @Override
-    public int compareTo(AbstractTask o) {
-        if (this.getStartTime().isBefore(o.getStartTime())) {
-            return 1;
-        }
-        if (this.getStartTime().isAfter(o.getStartTime())) {
-            return -1;
-        } else {
-            return 0;
-        }
-
+    public String toString() {
+        return "AbstractTask{" +
+                "description='" + description + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", status=" + status +
+                ", duration=" + duration +
+                ", startTime=" + startTime +
+                '}';
     }
-
 }
